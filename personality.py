@@ -578,7 +578,7 @@ if submit:
         
     st.header('Vos co-pilotes')
     
-    copilots = [k for k, v in scores.items() if v<100 and v>75]
+    copilots = [k for k, v in scores.items() if v<100 and v>=75]
     
     if len(copilots) == 0:
         st.write("Nous n'avons pas détecté de co-pilote")
