@@ -550,10 +550,10 @@ if submit:
     B_score = coef*personality_scores.get('B')
     C_score = coef*personality_scores.get('C')
     D_score = coef*personality_scores.get('D')
-    st.write(f'A: {A_score}')
-    st.write(f'B: {B_score}')
-    st.write(f'C: {C_score}')
-    st.write(f'D: {D_score}')
+    st.write(f'Ingénieur: {A_score}')
+    st.write(f'Cartographe: {B_score}')
+    st.write(f'Barde: {C_score}')
+    st.write(f'Inventeur: {D_score}')
     
     scores = {'Ingénieur':A_score, 'Cartographe':B_score, 'Barde': C_score, 'Inventeur':D_score}
     
