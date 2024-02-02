@@ -7,16 +7,38 @@ Created on Mon Jan 29 13:10:43 2024
 """
 
 import streamlit as st
+import os
+
+#import smtplib
+#from email.mime.multipart import MIMEMultipart
+#from email.mime.text import MIMEText
+
+def create_result_text_file(filename, personality_scores, coef):
+    with open(filename, 'w') as file:
+        file.write("Your results are :\n")
+        file.write(f"A_score = {coef * personality_scores.get('A')}\n")
+        file.write(f"B_score = {coef * personality_scores.get('B')}\n")
+        file.write(f"C_score = {coef * personality_scores.get('C')}\n")
+        file.write(f"D_score = {coef * personality_scores.get('D')}\n")
+
 
 st.set_page_config(layout='wide', page_icon=':unicorn_face:')
 
 A_text = """L'ingénieur aime bien résoudre des problèmes en utilisant la méthode scientifique et le raisonnement logique. 
-Il est dans la réflexion et est capable de conceptualiser des notions abstraites. C'est une personnalité plutôt introvertie qui aime analyser et savoir."""
+Il est dans la réflexion et est capable de conceptualiser des notions abstraites. C'est une personnalité plutôt introvertie qui aime analyser et savoir.\n
+***Points de force*** : compilent les faits, analysent, argumentent rationnellement, formulent des théories, mesurent précisément, résolvent les problèmes logiquement, 
+raisonnent, comprennent les éléments techniques, analysent avec l’esprit critique, travaillent à partir de chiffres, de statistiques, et sont précis."""
+
 B_text = """Le cartographe est prudent et organisé. Il a des habitudes bien précises et respecte soigneusement les règles.
-Il planifie méticuleusement ce qui doit être fait et se retrouve bien dans les tâches administratif ou son souci du détail est sa fiabilité est valorisé."""
-C_text = """Le barde aime le contact humain. Il est empathique, relationnel et amicale. Il est expressif et communique bien avec les autres."""
+Il planifie méticuleusement ce qui doit être fait et se retrouve bien dans les tâches administratif ou son souci du détail est sa fiabilité est valorisé.\n
+***Points de force*** : remarquent les défauts, approchent les problèmes pratiquement, vont jusqu’au bout des choses, développent des plans détaillés et des procédures, et envisagent les problèmes sous l’angle du planning."""
+
+C_text = """Le barde aime le contact humain. Il est empathique, relationnel et amicale. Il est expressif et communique bien avec les autres.\n
+***Points de force*** : comprennent les difficultés relationnelles, anticipent le ressenti des autres, comprennent intuitivement le ressenti des autres, perçoivent des éléments non verbaux issus du stress, engendrent l’enthousiasme, persuadent, concilient, enseignent, partagent, comprennent les éléments émotionnels, prennent en compte les valeurs."""
+
 D_text = """L'inventeur est un aventurier avec une imagination débordante qui rêve éveillé. C'est un visionnaire qui a toujours des idées très originales.
-C'est aussi un revel qui aime bien prendre des risuqes et se projeter."""
+C'est aussi un revel qui aime bien prendre des risuqes et se projeter.\n
+***Points de force*** : Lisent les signes du changement, voient les choses globalement, reconnaissent les nouvelles possibilités, tolèrent l’ambiguïté, intègrent les idées et les concepts, défient les règles établies, synthétisent les éléments divers en un nouveau tout, inventent des solutions nouvelles, résolvent les problèmes de manière intuitive, intègrent en simultané différents inputs."""
 
 st.title('Test de personnalité (demo)')
 
@@ -557,7 +579,30 @@ if submit:
     
     scores = {'Ingénieur':A_score, 'Cartographe':B_score, 'Barde': C_score, 'Inventeur':D_score}
     
-    pilots = [k for k, v in scores.items() if v==100]
+    pilots = [k for k, v in scores.items() if v>99]
+    
+    
+    # Create a temporary text file with the results
+    result_filename = 'results.txt'
+    create_result_text_file(result_filename, personality_scores, coef)
+
+    # Send the email
+    #result = send_email(subject, body, to_email, smtp_server, smtp_port, smtp_user, smtp_pass)
+
+    #if result:
+    #    st.success('Results sent successfully!')
+    #else:
+    #    st.error('Error sending the results. Please check your email configuration.')
+
+    # Display the download button
+    if os.path.exists(result_filename):
+        st.download_button(
+            label="Télecharger les Résultats",
+            data=open(result_filename, 'rb'),
+            key="download_results",
+            file_name="results.txt",
+            help="Click to download the results as a text file.",
+        )
     
     #st.write(f'votre type de personnalité est / vos types de personnalités sont: {pilots}')  
     
@@ -634,3 +679,5 @@ if submit:
     if 'Inventeur' in limites:
         st.image('artistii.png', width=400)
         st.write(D_text)
+
+        
