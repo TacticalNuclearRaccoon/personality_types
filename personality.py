@@ -607,7 +607,7 @@ if submit:
     #st.write(f'votre type de personnalité est / vos types de personnalités sont: {pilots}')  
     
     st.header('Vos pilotes')
-    
+    st.write('Vos pilotes representent vos traits de personnalités majeurs')
     if 'Ingénieur' in pilots:
         st.image('Inge.png', width=400)
         st.write(A_text)
@@ -622,7 +622,7 @@ if submit:
         st.write(D_text)
         
     st.header('Vos co-pilotes')
-    
+    st.write('Vos co-pilotes sont les traits de personnalités secondaires / co-dominants')
     copilots = [k for k, v in scores.items() if v<100 and v>=75]
     
     if len(copilots) == 0:
@@ -642,7 +642,7 @@ if submit:
         st.write(D_text)
         
     st.header('Vos failles')
-    
+    st.writes('Les failles représentent des types de personnalités qui sont loin de vous. Vous pouvez avoir des difficultés à communiquer avec des personnes dont ce sont les pilotes.')
     failles = [k for k, v in scores.items() if v<40 and v>15]
     
     if len(failles) == 0:
@@ -662,6 +662,7 @@ if submit:
         st.write(D_text)
         
     st.header('Vos limites')    
+    st.write("Les limites représentent des types de personnalités qui sont très loin de vous et avec lesquels vous avez du mal à collaborer et s'entendre")
     limites = [k for k, v in scores.items() if v<15]
     
     if len(limites) == 0:
