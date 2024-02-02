@@ -642,7 +642,7 @@ if submit:
         st.write(D_text)
         
     st.header('Vos failles')
-    st.writes('Les failles représentent des types de personnalités qui sont loin de vous. Vous pouvez avoir des difficultés à communiquer avec des personnes dont ce sont les pilotes.')
+    st.write('Les failles représentent des types de personnalités qui sont loin de vous. Vous pouvez avoir des difficultés à communiquer avec des personnes dont ce sont les pilotes.')
     failles = [k for k, v in scores.items() if v<40 and v>15]
     
     if len(failles) == 0:
