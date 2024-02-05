@@ -8,10 +8,27 @@ Created on Mon Jan 29 13:10:43 2024
 
 import streamlit as st
 import os
+import datetime
 
 #import smtplib
 #from email.mime.multipart import MIMEMultipart
 #from email.mime.text import MIMEText
+
+# Define your result_filename and global_results_filename
+result_filename = "results.txt"
+global_results_filename = "global_results.txt"
+
+# Function to append results to the global_results.txt file
+def append_to_global_results(timestamp, A_score, B_score, C_score, D_score):
+    with open(global_results_filename, 'a') as global_results_file:
+        global_results_file.write(f"{timestamp} - A: {A_score}, B: {B_score}, C: {C_score}, D: {D_score}\n")
+
+# Check if the global_results.txt file exists, if not, create it
+if not os.path.exists(global_results_filename):
+    with open(global_results_filename, 'w') as global_results_file:
+        global_results_file.write("Timestamp - A Score, B Score, C Score, D Score\n")
+
+
 
 def create_result_text_file(filename, personality_scores, coef):
     with open(filename, 'w') as file:
@@ -572,10 +589,21 @@ if submit:
     B_score = coef*personality_scores.get('B')
     C_score = coef*personality_scores.get('C')
     D_score = coef*personality_scores.get('D')
+    
     st.write(f'Ingénieur: {A_score}')
     st.write(f'Cartographe: {B_score}')
     st.write(f'Barde: {C_score}')
     st.write(f'Inventeur: {D_score}')
+    
+    # Get the current timestamp
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    # Append results to global_results.txt
+    append_to_global_results(timestamp, A_score, B_score, C_score, D_score)
+
+    # Display the results
+    st.success(f"Results calculated and saved at {timestamp}. A: {A_score}, B: {B_score}, C: {C_score}, D: {D_score}")
+
     
     scores = {'Ingénieur':A_score, 'Cartographe':B_score, 'Barde': C_score, 'Inventeur':D_score}
     
@@ -607,7 +635,7 @@ if submit:
     #st.write(f'votre type de personnalité est / vos types de personnalités sont: {pilots}')  
     
     st.header('Vos pilotes')
-    st.write('Vos pilotes representent vos traits de personnalités majeurs')
+    
     if 'Ingénieur' in pilots:
         st.image('Inge.png', width=400)
         st.write(A_text)
@@ -622,7 +650,7 @@ if submit:
         st.write(D_text)
         
     st.header('Vos co-pilotes')
-    st.write('Vos co-pilotes sont les traits de personnalités secondaires / co-dominants')
+    
     copilots = [k for k, v in scores.items() if v<100 and v>=75]
     
     if len(copilots) == 0:
@@ -642,7 +670,7 @@ if submit:
         st.write(D_text)
         
     st.header('Vos failles')
-    st.write('Les failles représentent des types de personnalités qui sont loin de vous. Vous pouvez avoir des difficultés à communiquer avec des personnes dont ce sont les pilotes.')
+    
     failles = [k for k, v in scores.items() if v<40 and v>15]
     
     if len(failles) == 0:
@@ -662,7 +690,6 @@ if submit:
         st.write(D_text)
         
     st.header('Vos limites')    
-    st.write("Les limites représentent des types de personnalités qui sont très loin de vous et avec lesquels vous avez du mal à collaborer et s'entendre")
     limites = [k for k, v in scores.items() if v<15]
     
     if len(limites) == 0:
