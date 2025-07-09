@@ -9,6 +9,7 @@ Created on Mon Jan 29 13:10:43 2024
 import streamlit as st
 import os
 import datetime
+import requests
 
 #import smtplib
 #from email.mime.multipart import MIMEMultipart
@@ -17,29 +18,55 @@ import datetime
 # Define your result_filename and global_results_filename
 result_filename = "results.txt"
 global_results_filename = "global_results.txt"
+icon = "Favicon_2x.ico"
+
+#post to database
+DATABASE_URL = st.secrets["DATABASE_URL"]
+DATABASE_API_KEY = st.secrets["DATABASE_API_KEY"]
+
+def post_results_to_database(user, orga, A_score, B_score, C_score, D_score):
+    url = f"{DATABASE_URL}/rest/v1/hermann_teams"
+    headers = {
+        "apikey": DATABASE_API_KEY,
+        "Authorization": f"Bearer {DATABASE_API_KEY}",
+        "Content-Type": "application/json",
+        "Prefer": "return=minimal"
+    }
+    data = {
+        "user": user,
+        "organisation": orga,
+        "A_score": A_score,
+        "B_score": B_score,
+        "C_score": C_score,
+        "D_score": D_score
+    }
+    response = requests.post(url, headers=headers, json=data)
+    return response
 
 # Function to append results to the global_results.txt file
-def append_to_global_results(timestamp, A_score, B_score, C_score, D_score):
+def append_to_global_results(timestamp, user, orga, A_score, B_score, C_score, D_score):
     with open(global_results_filename, 'a') as global_results_file:
-        global_results_file.write(f"{timestamp} - A: {A_score}, B: {B_score}, C: {C_score}, D: {D_score}\n")
+        global_results_file.write(f"{timestamp} - {user} - {orga} - A: {A_score}, B: {B_score}, C: {C_score}, D: {D_score}\n")
 
 # Check if the global_results.txt file exists, if not, create it
 if not os.path.exists(global_results_filename):
     with open(global_results_filename, 'w') as global_results_file:
-        global_results_file.write("Timestamp - A Score, B Score, C Score, D Score\n")
+        global_results_file.write("Timestamp - user - orga - A Score, B Score, C Score, D Score\n")
 
 
 
-def create_result_text_file(filename, personality_scores, coef):
+def create_result_text_file(filename, user, orga, personality_scores, coef):
     with open(filename, 'w') as file:
         file.write("Your results are :\n")
+        file.write(f'user : {user}\n')
+        file.write(f"organisation : {orga}\n")
         file.write(f"A_score = {coef * personality_scores.get('A')}\n")
         file.write(f"B_score = {coef * personality_scores.get('B')}\n")
         file.write(f"C_score = {coef * personality_scores.get('C')}\n")
         file.write(f"D_score = {coef * personality_scores.get('D')}\n")
 
 
-st.set_page_config(layout='wide', page_icon=':unicorn_face:')
+st.set_page_config(layout='wide', page_icon=icon, page_title='Boussole des personnalités')
 
 A_text = """L'ingénieur aime bien résoudre des problèmes en utilisant la méthode scientifique et le raisonnement logique. 
 Il est dans la réflexion et est capable de conceptualiser des notions abstraites. C'est une personnalité plutôt introvertie qui aime analyser et savoir.\n
@@ -57,7 +84,10 @@ D_text = """L'inventeur est un aventurier avec une imagination débordante qui r
 C'est aussi un revel qui aime bien prendre des risuqes et se projeter.\n
 ***Points de force*** : Lisent les signes du changement, voient les choses globalement, reconnaissent les nouvelles possibilités, tolèrent l’ambiguïté, intègrent les idées et les concepts, défient les règles établies, synthétisent les éléments divers en un nouveau tout, inventent des solutions nouvelles, résolvent les problèmes de manière intuitive, intègrent en simultané différents inputs."""
 
-st.title('Test de personnalité (demo)')
+st.image('Banniere argios.png', use_container_width=True)
+st.title('Boussolle des personalités')
+user = st.text_input('Entrez votre nom', placeholder='Votre nom ici')
+orga = st.text_input('Entrez votre organisation', placeholder='Votre organisation ici')
 
 personality_scores = {
     'A':0,
@@ -65,148 +95,6 @@ personality_scores = {
     'C':0,
     'D':0
     }
-
-st.header('Loisirs')
-
-st.write('Selectionnez les loisirs que vous pratiquez ou que vous aimeriez pratiquer')
-
-col1, col2 = st.columns(2)
-
-with col1:
-    loisirs = {
-        'photo': st.checkbox('Photographie'),
-        'farniente': st.checkbox('Farniente'),
-        'radioamateur': st.checkbox('Radioamateur'),
-        'chasse': st.checkbox('Chasse'),
-        'peche': st.checkbox('Pêche'),
-        'jadinage': st.checkbox('Jardinage'),
-        'travail_bois':st.checkbox('Travail du bois'),
-        'musique': st.checkbox('Musique'),
-        'jogging':st.checkbox('Jogging'),
-        'repare_voiture':st.checkbox('Réparation de voitures'),
-        'chant':st.checkbox('Chant'),
-        'benevolat':st.checkbox('Bénévolat'),
-        'lecture':st.checkbox('Lecture'),
-        'bricolage':st.checkbox('Bricolage'),
-        'spect_sport':st.checkbox('Spectateur sportif'),
-        'collect':st.checkbox('Collections')
-        }
-with col2:
-    loisirs2 = {
-        'jeux_hasard':st.checkbox('Jeux de hasard'),
-        'artisanats':st.checkbox('Artisanats'),
-        'cuisine':st.checkbox('Cuisine'),
-        'conversations':st.checkbox('Conversations'),
-        'théâtre':st.checkbox('Théâtre'),
-        'jeux_cartes':st.checkbox('Jeux de cartes'),
-        'peche_ss_marine':st.checkbox('Pêche sous marine'),
-        'voyages':st.checkbox('Voyages'),
-        'botanique':st.checkbox('Botanique'),
-        'golf':st.checkbox('Golf'),
-        'ordinateur':st.checkbox('Ordinateur'),
-        'danse':st.checkbox('Danse'),
-        'jeux_strat':st.checkbox('Jeux de stratégie'),
-        'jeux_logik':st.checkbox('Jeux de logique'),
-        'jeux_societe':st.checkbox('jeux de société'),
-        'bowling':st.checkbox('Bowling') 
-        }
-    
-if loisirs["photo"]:
-    personality_scores["D"] += 1
-
-if loisirs['farniente']:
-    personality_scores["D"] += 1
-
-if loisirs['radioamateur']:
-    personality_scores["A"] += 1
-
-if loisirs['chasse']:
-    personality_scores["A"] += 1
-
-if loisirs['peche']:
-    personality_scores["B"] += 1
-
-if loisirs['jadinage']:
-    personality_scores['C'] +=1
-    
-if loisirs['travail_bois']:
-    personality_scores['A'] +=1
-    
-if loisirs['musique']:
-    personality_scores['C'] +=1
-
-if loisirs['jogging']:
-    personality_scores['B'] +=1
-
-if loisirs['repare_voiture']:
-    personality_scores['A'] +=1
-
-if loisirs['chant']:
-    personality_scores['C'] +=1
-
-if loisirs['benevolat']:
-    personality_scores['C'] +=1
-
-if loisirs['lecture']:
-    personality_scores['C'] +=1
-
-if loisirs['bricolage']:
-    personality_scores['A'] +=1
-
-if loisirs['spect_sport']:
-    personality_scores['B'] +=1
-
-if loisirs['collect']:
-    personality_scores['B'] +=1
-
-if loisirs2['jeux_hasard']:
-    personality_scores['D'] +=1
-
-if loisirs2['artisanats']:
-    personality_scores['D'] +=1
-
-if loisirs2['cuisine']:
-    personality_scores['B'] +=1
-
-if loisirs2['conversations']:
-    personality_scores['C'] +=1
-
-if loisirs2['théâtre']:
-    personality_scores['D'] +=1
-
-if loisirs2['jeux_cartes']:
-    personality_scores['B'] +=1
-
-if loisirs2['peche_ss_marine']:
-    personality_scores['D'] +=1
-
-if loisirs2['voyages']:
-    personality_scores['C'] +=1
-
-if loisirs2['botanique']:
-    personality_scores['B'] +=1
-
-if loisirs2['golf']:
-    personality_scores['A'] +=1
-
-if loisirs2['ordinateur']:
-    personality_scores['A'] +=1
-
-if loisirs2['danse']:
-    personality_scores['D'] +=1
-
-if loisirs2['jeux_strat']:
-    personality_scores['D'] +=1
-
-if loisirs2['jeux_logik']:
-    personality_scores['A'] +=1
-
-if loisirs2['jeux_societe']:
-    personality_scores['C'] +=1
-
-if loisirs2['bowling']:
-    personality_scores['B'] +=1
-
 
 st.header('Activités de Travail')
 
@@ -322,6 +210,7 @@ with col2:
         }
 
 selected_mots = sum(mots_cles.values())+sum(mots_cles2.values())
+st.write(f'Vous avez sélectionné {selected_mots} mots clés')
 
 if selected_mots > 10:
     st.error('Vous ne pouvez selectionner que 10 mots clés', icon='😢')
@@ -446,6 +335,147 @@ if mots_cles2['Original']:
 if mots_cles2['Indépendant']:
     personality_scores['D'] +=1
 
+st.header('Loisirs')
+
+st.write('Selectionnez les loisirs que vous pratiquez ou que vous aimeriez pratiquer')
+
+col1, col2 = st.columns(2)
+
+with col1:
+    loisirs = {
+        'photo': st.checkbox('Photographie'),
+        'farniente': st.checkbox('Farniente'),
+        'radioamateur': st.checkbox('Radioamateur'),
+        'chasse': st.checkbox('Chasse'),
+        'peche': st.checkbox('Pêche'),
+        'jadinage': st.checkbox('Jardinage'),
+        'travail_bois':st.checkbox('Travail du bois'),
+        'musique': st.checkbox('Musique'),
+        'jogging':st.checkbox('Jogging'),
+        'repare_voiture':st.checkbox('Réparation de voitures'),
+        'chant':st.checkbox('Chant'),
+        'benevolat':st.checkbox('Bénévolat'),
+        'lecture':st.checkbox('Lecture'),
+        'bricolage':st.checkbox('Bricolage'),
+        'spect_sport':st.checkbox('Spectateur sportif'),
+        'collect':st.checkbox('Collections')
+        }
+with col2:
+    loisirs2 = {
+        'jeux_hasard':st.checkbox('Jeux de hasard'),
+        'artisanats':st.checkbox('Artisanats'),
+        'cuisine':st.checkbox('Cuisine'),
+        'conversations':st.checkbox('Conversations'),
+        'théâtre':st.checkbox('Théâtre'),
+        'jeux_cartes':st.checkbox('Jeux de cartes'),
+        'peche_ss_marine':st.checkbox('Pêche sous marine'),
+        'voyages':st.checkbox('Voyages'),
+        'botanique':st.checkbox('Botanique'),
+        'golf':st.checkbox('Golf'),
+        'ordinateur':st.checkbox('Ordinateur'),
+        'danse':st.checkbox('Danse'),
+        'jeux_strat':st.checkbox('Jeux de stratégie'),
+        'jeux_logik':st.checkbox('Jeux de logique'),
+        'jeux_societe':st.checkbox('Jeux de société'),
+        'bowling':st.checkbox('Bowling') 
+        }
+    
+if loisirs["photo"]:
+    personality_scores["D"] += 1
+
+if loisirs['farniente']:
+    personality_scores["D"] += 1
+
+if loisirs['radioamateur']:
+    personality_scores["A"] += 1
+
+if loisirs['chasse']:
+    personality_scores["A"] += 1
+
+if loisirs['peche']:
+    personality_scores["B"] += 1
+
+if loisirs['jadinage']:
+    personality_scores['C'] +=1
+    
+if loisirs['travail_bois']:
+    personality_scores['A'] +=1
+    
+if loisirs['musique']:
+    personality_scores['C'] +=1
+
+if loisirs['jogging']:
+    personality_scores['B'] +=1
+
+if loisirs['repare_voiture']:
+    personality_scores['A'] +=1
+
+if loisirs['chant']:
+    personality_scores['C'] +=1
+
+if loisirs['benevolat']:
+    personality_scores['C'] +=1
+
+if loisirs['lecture']:
+    personality_scores['C'] +=1
+
+if loisirs['bricolage']:
+    personality_scores['A'] +=1
+
+if loisirs['spect_sport']:
+    personality_scores['B'] +=1
+
+if loisirs['collect']:
+    personality_scores['B'] +=1
+
+if loisirs2['jeux_hasard']:
+    personality_scores['D'] +=1
+
+if loisirs2['artisanats']:
+    personality_scores['D'] +=1
+
+if loisirs2['cuisine']:
+    personality_scores['B'] +=1
+
+if loisirs2['conversations']:
+    personality_scores['C'] +=1
+
+if loisirs2['théâtre']:
+    personality_scores['D'] +=1
+
+if loisirs2['jeux_cartes']:
+    personality_scores['B'] +=1
+
+if loisirs2['peche_ss_marine']:
+    personality_scores['D'] +=1
+
+if loisirs2['voyages']:
+    personality_scores['C'] +=1
+
+if loisirs2['botanique']:
+    personality_scores['B'] +=1
+
+if loisirs2['golf']:
+    personality_scores['A'] +=1
+
+if loisirs2['ordinateur']:
+    personality_scores['A'] +=1
+
+if loisirs2['danse']:
+    personality_scores['D'] +=1
+
+if loisirs2['jeux_strat']:
+    personality_scores['D'] +=1
+
+if loisirs2['jeux_logik']:
+    personality_scores['A'] +=1
+
+if loisirs2['jeux_societe']:
+    personality_scores['C'] +=1
+
+if loisirs2['bowling']:
+    personality_scores['B'] +=1
+
 
 st.header('20 Questions')
 st.write('Sélectionnez les activités que vous aimez ou aimeriez pratiquer.')
@@ -455,7 +485,7 @@ with col1:
     questions = {
         'Pratiquer des jeux de logique':st.checkbox('Pratiquer des jeux de logique'),
         'Dresser un arbre généalogique':st.checkbox('Dresser un arbre généalogique'),
-        'Prendre la voiture et rouler sans but':st.checkbox('Prendre la voiture et rouler sans but'),
+        'Prendre la voiture ou le vélo et rouler sans but':st.checkbox('Prendre la voiture ou le vélo et rouler sans but'),
         'Construire':st.checkbox("Construire un article en kit en suivant la notice d'assemblage"),
         'Jouer avec des enfants':st.checkbox('Jouer avec des enfants'),
         'Rêver éveillé':st.checkbox('Rêver éveillé'),
@@ -482,7 +512,7 @@ if questions['Pratiquer des jeux de logique']:
     personality_scores['A']+=1
 if questions['Dresser un arbre généalogique']:
     personality_scores['B']+=1
-if questions['Prendre la voiture et rouler sans but']:
+if questions['Prendre la voiture ou le vélo et rouler sans but']:
     personality_scores['D']+=1
 if questions['Construire']:
     personality_scores['B']+=1
@@ -539,7 +569,7 @@ with col2:
         'Et si...':st.checkbox('Et si...'),
         'Soyons sérieux':st.checkbox('Soyons sérieux.'),
         "Audace":st.checkbox("De l'audace, toujours de..."),
-        "J'ai le sentiments que...":st.checkbox("J'ai le sentiments que..."),
+        "J'ai le sentiment que...":st.checkbox("J'ai le sentiments que..."),
         'critique':st.checkbox("Une critique s'impose."),
         'ordre':st.checkbox('Procédons par ordre.'),
         "Nul": st.checkbox("Nul n'est censé ignorer la loi."),
@@ -568,7 +598,7 @@ if phrases2['Soyons sérieux']:
     personality_scores['A']+=1
 if phrases2["Audace"]:
     personality_scores['D']+=1
-if phrases2["J'ai le sentiments que..."]:
+if phrases2["J'ai le sentiment que..."]:
     personality_scores['C']+=1
 if phrases2['critique']:
     personality_scores['A']+=1
@@ -599,9 +629,15 @@ if submit:
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     # Append results to global_results.txt
-    append_to_global_results(timestamp, A_score, B_score, C_score, D_score)
+    append_to_global_results(timestamp, user, orga, A_score, B_score, C_score, D_score)
 
     # Display the results
+    response = post_results_to_database(user, orga, A_score, B_score, C_score, D_score)
+    if response.status_code == 201 or response.status_code == 204:
+        st.success("Results posted successfully!")
+    else:
+        st.error(f"Failed to post results: {response.status_code} - {response.text}")
+
     st.success(f"Results calculated and saved at {timestamp}. A: {A_score}, B: {B_score}, C: {C_score}, D: {D_score}")
 
     
@@ -611,8 +647,8 @@ if submit:
     
     
     # Create a temporary text file with the results
-    result_filename = 'results.txt'
-    create_result_text_file(result_filename, personality_scores, coef)
+    #result_filename = 'results.txt'
+    create_result_text_file(result_filename, user, orga, personality_scores, coef)
 
     # Send the email
     #result = send_email(subject, body, to_email, smtp_server, smtp_port, smtp_user, smtp_pass)
@@ -621,16 +657,6 @@ if submit:
     #    st.success('Results sent successfully!')
     #else:
     #    st.error('Error sending the results. Please check your email configuration.')
-
-    # Display the download button
-    if os.path.exists(result_filename):
-        st.download_button(
-            label="Télecharger les Résultats",
-            data=open(result_filename, 'rb'),
-            key="download_results",
-            file_name="results.txt",
-            help="Click to download the results as a text file.",
-        )
     
     #st.write(f'votre type de personnalité est / vos types de personnalités sont: {pilots}')  
     
@@ -709,3 +735,12 @@ if submit:
         st.write(D_text)
 
         
+    # Display the download button
+    if os.path.exists(result_filename):
+        st.download_button(
+            label="Télecharger les Résultats",
+            data=open(result_filename, 'rb'),
+            key="download_results",
+            file_name="results.txt",
+            help="Click to download the results as a text file.",
+        )

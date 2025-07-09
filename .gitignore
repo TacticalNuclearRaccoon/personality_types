@@ -1,3 +1,5 @@
+# secrets
+.streamlit/secrets.toml
 #stupid mac stuff
 .DS_Store
 # Byte-compiled / optimized / DLL files
