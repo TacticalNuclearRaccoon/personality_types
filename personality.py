@@ -85,9 +85,9 @@ C'est aussi un revel qui aime bien prendre des risuqes et se projeter.\n
 ***Points de force*** : Lisent les signes du changement, voient les choses globalement, reconnaissent les nouvelles possibilités, tolèrent l’ambiguïté, intègrent les idées et les concepts, défient les règles établies, synthétisent les éléments divers en un nouveau tout, inventent des solutions nouvelles, résolvent les problèmes de manière intuitive, intègrent en simultané différents inputs."""
 
 st.image('Banniere argios.png', use_column_width=True)
-st.title('Boussolle des personalités')
-user = st.text_input('Entrez votre nom', placeholder='Votre nom ici')
-orga = st.text_input('Entrez votre organisation', placeholder='Votre organisation ici')
+st.title('Boussole des personalités')
+user = st.text_input('Renseignez pseudo', placeholder='Votre pseudo ici')
+orga = st.text_input("Renseignez l'id du test", placeholder="L'id qu'on vous a fourni pour ce test")
 
 personality_scores = {
     'A':0,
