@@ -611,136 +611,142 @@ if phrases2["valeur"]:
 
 
 submit = st.button('Calculer le résultat')
+if 'results_posted' not in st.session_state:
+    st.session_state['results_posted'] = False
+
 if submit:
-    if max(personality_scores.values()) == 0:
-        st.error('Vous devez remplir au moins une des catégories pour pouvoir calculer le résultat', icon='🥺')
-    coef = 100/max(personality_scores.values())
-    A_score = coef*personality_scores.get('A')
-    B_score = coef*personality_scores.get('B')
-    C_score = coef*personality_scores.get('C')
-    D_score = coef*personality_scores.get('D')
-    
-    st.write(f'Ingénieur: {A_score}')
-    st.write(f'Cartographe: {B_score}')
-    st.write(f'Barde: {C_score}')
-    st.write(f'Inventeur: {D_score}')
-    
-    # Get the current timestamp
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-    # Append results to global_results.txt
-    append_to_global_results(timestamp, user, orga, A_score, B_score, C_score, D_score)
-
-    # Display the results
-    response = post_results_to_database(user, orga, A_score, B_score, C_score, D_score)
-    if response.status_code == 201 or response.status_code == 204:
-        st.success("Results posted successfully!")
+    if st.session_state['results_posted']:
+        st.warning('Les résultats ont déjà été envoyés pour cette session.', icon='⚠️')
     else:
-        st.error(f"Failed to post results: {response.status_code} - {response.text}")
-
-    st.success(f"Results calculated and saved at {timestamp}. A: {A_score}, B: {B_score}, C: {C_score}, D: {D_score}")
-
-    
-    scores = {'Ingénieur':A_score, 'Cartographe':B_score, 'Barde': C_score, 'Inventeur':D_score}
-    
-    pilots = [k for k, v in scores.items() if v>99]
-    
-    
-    # Create a temporary text file with the results
-    #result_filename = 'results.txt'
-    create_result_text_file(result_filename, user, orga, personality_scores, coef)
-
-    # Send the email
-    #result = send_email(subject, body, to_email, smtp_server, smtp_port, smtp_user, smtp_pass)
-
-    #if result:
-    #    st.success('Results sent successfully!')
-    #else:
-    #    st.error('Error sending the results. Please check your email configuration.')
-    
-    #st.write(f'votre type de personnalité est / vos types de personnalités sont: {pilots}')  
-    
-    st.header('Vos pilotes')
-    
-    if 'Ingénieur' in pilots:
-        st.image('Inge.png', width=400)
-        st.write(A_text)
-    if 'Cartographe' in pilots:
-        st.image('carto.png', width=400)
-        st.write(B_text)
-    if 'Barde' in pilots:
-        st.image('bard.png', width=400)
-        st.write(C_text)
-    if 'Inventeur' in pilots:
-        st.image('artistii.png', width=400)
-        st.write(D_text)
+        if max(personality_scores.values()) == 0:
+            st.error('Vous devez remplir au moins une des catégories pour pouvoir calculer le résultat', icon='🥺')
+        coef = 100/max(personality_scores.values())
+        A_score = coef*personality_scores.get('A')
+        B_score = coef*personality_scores.get('B')
+        C_score = coef*personality_scores.get('C')
+        D_score = coef*personality_scores.get('D')
         
-    st.header('Vos co-pilotes')
-    
-    copilots = [k for k, v in scores.items() if v<100 and v>=75]
-    
-    if len(copilots) == 0:
-        st.write("Nous n'avons pas détecté de co-pilote")
-    
-    if 'Ingénieur' in copilots:
-        st.image('Inge.png', width=400)
-        st.write(A_text)
-    if 'Cartographe' in copilots:
-        st.image('carto.png', width=400)
-        st.write(B_text)
-    if 'Barde' in copilots:
-        st.image('bard.png', width=400)
-        st.write(C_text)
-    if 'Inventeur' in copilots:
-        st.image('artistii.png', width=400)
-        st.write(D_text)
+        st.write(f'Ingénieur: {A_score}')
+        st.write(f'Cartographe: {B_score}')
+        st.write(f'Barde: {C_score}')
+        st.write(f'Inventeur: {D_score}')
         
-    st.header('Vos failles')
-    
-    failles = [k for k, v in scores.items() if v<40 and v>15]
-    
-    if len(failles) == 0:
-        st.write("Nous n'avons pas détecté de failles")
-    
-    if 'Ingénieur' in failles:
-        st.image('Inge.png', width=400)
-        st.write(A_text)
-    if 'Cartographe' in failles:
-        st.image('carto.png', width=400)
-        st.write(B_text)
-    if 'Barde' in failles:
-        st.image('bard.png', width=400)
-        st.write(C_text)
-    if 'Inventeur' in failles:
-        st.image('artistii.png', width=400)
-        st.write(D_text)
-        
-    st.header('Vos limites')    
-    limites = [k for k, v in scores.items() if v<15]
-    
-    if len(limites) == 0:
-        st.write("Nous n'avons pas détecté de limites")
-    
-    if 'Ingénieur' in limites:
-        st.image('Inge.png', width=400)
-        st.write(A_text)
-    if 'Cartographe' in limites:
-        st.image('carto.png', width=400)
-        st.write(B_text)
-    if 'Barde' in limites:
-        st.image('bard.png', width=400)
-        st.write(C_text)
-    if 'Inventeur' in limites:
-        st.image('artistii.png', width=400)
-        st.write(D_text)
+        # Get the current timestamp
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
+        # Append results to global_results.txt
+        append_to_global_results(timestamp, user, orga, A_score, B_score, C_score, D_score)
+
+        # Display the results
+        response = post_results_to_database(user, orga, A_score, B_score, C_score, D_score)
+        if response.status_code == 201 or response.status_code == 204:
+            st.success("Results posted successfully!")
+        else:
+            st.error(f"Failed to post results: {response.status_code} - {response.text}")
+
+        st.success(f"Results calculated and saved at {timestamp}. A: {A_score}, B: {B_score}, C: {C_score}, D: {D_score}")
+
+        st.session_state['results_posted'] = True
+
+        scores = {'Ingénieur':A_score, 'Cartographe':B_score, 'Barde': C_score, 'Inventeur':D_score}
         
-    # Display the download button
-    if os.path.exists(result_filename):
-        st.download_button(
-            label="Télecharger les Résultats",
-            data=open(result_filename, 'rb'),
-            key="download_results",
-            file_name="results.txt",
-            help="Click to download the results as a text file.",
-        )
+        pilots = [k for k, v in scores.items() if v>99]
+        
+        
+        # Create a temporary text file with the results
+        #result_filename = 'results.txt'
+        create_result_text_file(result_filename, user, orga, personality_scores, coef)
+
+        # Send the email
+        #result = send_email(subject, body, to_email, smtp_server, smtp_port, smtp_user, smtp_pass)
+
+        #if result:
+        #    st.success('Results sent successfully!')
+        #else:
+        #    st.error('Error sending the results. Please check your email configuration.')
+        
+        #st.write(f'votre type de personnalité est / vos types de personnalités sont: {pilots}')  
+        
+        st.header('Vos pilotes')
+        
+        if 'Ingénieur' in pilots:
+            st.image('Inge.png', width=400)
+            st.write(A_text)
+        if 'Cartographe' in pilots:
+            st.image('carto.png', width=400)
+            st.write(B_text)
+        if 'Barde' in pilots:
+            st.image('bard.png', width=400)
+            st.write(C_text)
+        if 'Inventeur' in pilots:
+            st.image('artistii.png', width=400)
+            st.write(D_text)
+            
+        st.header('Vos co-pilotes')
+        
+        copilots = [k for k, v in scores.items() if v<100 and v>=75]
+        
+        if len(copilots) == 0:
+            st.write("Nous n'avons pas détecté de co-pilote")
+        
+        if 'Ingénieur' in copilots:
+            st.image('Inge.png', width=400)
+            st.write(A_text)
+        if 'Cartographe' in copilots:
+            st.image('carto.png', width=400)
+            st.write(B_text)
+        if 'Barde' in copilots:
+            st.image('bard.png', width=400)
+            st.write(C_text)
+        if 'Inventeur' in copilots:
+            st.image('artistii.png', width=400)
+            st.write(D_text)
+            
+        st.header('Vos failles')
+        
+        failles = [k for k, v in scores.items() if v<40 and v>15]
+        
+        if len(failles) == 0:
+            st.write("Nous n'avons pas détecté de failles")
+        
+        if 'Ingénieur' in failles:
+            st.image('Inge.png', width=400)
+            st.write(A_text)
+        if 'Cartographe' in failles:
+            st.image('carto.png', width=400)
+            st.write(B_text)
+        if 'Barde' in failles:
+            st.image('bard.png', width=400)
+            st.write(C_text)
+        if 'Inventeur' in failles:
+            st.image('artistii.png', width=400)
+            st.write(D_text)
+            
+        st.header('Vos limites')    
+        limites = [k for k, v in scores.items() if v<15]
+        
+        if len(limites) == 0:
+            st.write("Nous n'avons pas détecté de limites")
+        
+        if 'Ingénieur' in limites:
+            st.image('Inge.png', width=400)
+            st.write(A_text)
+        if 'Cartographe' in limites:
+            st.image('carto.png', width=400)
+            st.write(B_text)
+        if 'Barde' in limites:
+            st.image('bard.png', width=400)
+            st.write(C_text)
+        if 'Inventeur' in limites:
+            st.image('artistii.png', width=400)
+            st.write(D_text)
+
+        # Display the download button
+        if os.path.exists(result_filename):
+            st.download_button(
+                label="Télecharger les Résultats",
+                data=open(result_filename, 'rb'),
+                key="download_results",
+                file_name="results.txt",
+                help="Click to download the results as a text file.",
+            )
