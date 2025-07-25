@@ -3,6 +3,12 @@ perso
 env
 # secrets
 .streamlit/secrets.toml
+
+#data files
+Argios.txt
+global_results.txt
+results.txt
+
 #stupid mac stuff
 .DS_Store
 # Byte-compiled / optimized / DLL files
