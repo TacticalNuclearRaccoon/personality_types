@@ -1,3 +1,6 @@
+# env
+perso
+env
 # secrets
 .streamlit/secrets.toml
 #stupid mac stuff

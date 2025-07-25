@@ -54,7 +54,6 @@ if not os.path.exists(global_results_filename):
         global_results_file.write("Timestamp - user - orga - A Score, B Score, C Score, D Score\n")
 
 
-
 def create_result_text_file(filename, user, orga, personality_scores, coef):
     with open(filename, 'w') as file:
         file.write("Your results are :\n")
@@ -84,10 +83,17 @@ D_text = """L'inventeur est un aventurier avec une imagination débordante qui r
 C'est aussi un revel qui aime bien prendre des risuqes et se projeter.\n
 ***Points de force*** : Lisent les signes du changement, voient les choses globalement, reconnaissent les nouvelles possibilités, tolèrent l’ambiguïté, intègrent les idées et les concepts, défient les règles établies, synthétisent les éléments divers en un nouveau tout, inventent des solutions nouvelles, résolvent les problèmes de manière intuitive, intègrent en simultané différents inputs."""
 
-st.image('Banniere argios.png', use_column_width=True)
-st.title('Boussole des personalités')
+try:
+    st.image('Banniere argios.png', use_container_width=True)
+except:
+    st.image('Banniere argios.png', use_column_width=True)
+
+st.title('e-diagnostic for Personality Teams : Le GPS des personnalités pour une collaboration sans friction')
+
 user = st.text_input('Renseignez pseudo', placeholder='Votre pseudo ici')
-orga = st.text_input("Renseignez l'id du test", placeholder="L'id qu'on vous a fourni pour ce test")
+# TO DO : set a logic for the list of organisations
+list_of_orga = ["dechatlon"]
+orga = st.selectbox("Choisissez l'id du test", list_of_orga)
 
 personality_scores = {
     'A':0,
