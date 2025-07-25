@@ -1,7 +1,0 @@
-Your results are :
-user : deniz
-organisation : argios
-A_score = 72.22222222222221
-B_score = 22.22222222222222
-C_score = 44.44444444444444
-D_score = 100.0
