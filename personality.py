@@ -92,8 +92,17 @@ st.title('e-diagnostic for Personality Teams : Le GPS des personnalités pour un
 
 user = st.text_input('Renseignez pseudo', placeholder='Votre pseudo ici')
 # TO DO : set a logic for the list of organisations
-list_of_orga = ["dechatlon"]
-orga = st.selectbox("Choisissez l'id du test", list_of_orga)
+
+list_of_orga = ["Decathlon_equipe_data_analyst"]
+
+orga = st.selectbox(
+        "Choisissez l'id du test",
+        list_of_orga,
+        index=None,
+        placeholder="Choisissez l'id du test",
+        accept_new_options=True,
+    )
+st.write("Vous avez choisi:", orga)
 
 personality_scores = {
     'A':0,
