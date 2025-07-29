@@ -113,7 +113,7 @@ personality_scores = {
 
 st.header('Activités de Travail')
 
-st.write("Parmis les activités ci-dessous, cochez celles que vous faites bien, ou très bien")
+st.write("Parmi les activités ci-dessous, cochez celles que vous faites bien, ou très bien")
 
 col1, col2 = st.columns(2)
 with col1:
