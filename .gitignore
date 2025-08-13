@@ -4,6 +4,10 @@ env
 # secrets
 .streamlit/secrets.toml
 
+# database test scripts
+add_test_data.py
+test_database.py
+
 #data files
 Argios.txt
 global_results.txt
