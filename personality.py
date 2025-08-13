@@ -93,7 +93,44 @@ st.title('e-diagnostic for Personality Teams : Le GPS des personnalités pour un
 user = st.text_input('Renseignez pseudo', placeholder='Votre pseudo ici')
 # TO DO : set a logic for the list of organisations
 
-list_of_orga = ["Decathlon_equipe_data_analyst"]
+# Function to fetch organizations from database
+def get_organizations_from_database():
+    url = f"{DATABASE_URL}/rest/v1/organizations"
+    headers = {
+        "apikey": DATABASE_API_KEY,
+        "Authorization": f"Bearer {DATABASE_API_KEY}",
+        "Content-Type": "application/json"
+    }
+    
+    try:
+        response = requests.get(url, headers=headers)
+        #st.write(f"Debug: Response status code: {response.status_code}")
+        #st.write(f"Debug: Response headers: {dict(response.headers)}")
+        
+        if response.status_code == 200:
+            orgs = response.json()
+            #st.write(f"Debug: Raw response: {orgs}")
+            #st.write(f"Debug: Number of organizations found: {len(orgs)}")
+            
+            if not orgs:
+                st.warning("No organizations found in database")
+                return ["dummy organisation"]
+            
+            names = [org['name'] for org in orgs if org.get('name')]
+            #st.write(f"Debug: Extracted names: {names}")
+            return names
+        else:
+            st.warning(f"Failed to fetch organizations: {response.status_code}")
+            st.write(f"Debug: Error response: {response.text}")
+            return ["dummy organisation"]
+    except Exception as e:
+        st.warning(f"Error fetching organizations: {e}")
+        st.write(f"Debug: Exception type: {type(e)}")
+        return ["dummy organisation"]
+
+# fetch organization list from database
+list_of_orga = get_organizations_from_database()
+#st.write(list_of_orga)
 
 orga = st.selectbox(
         "Choisissez l'id du test",
