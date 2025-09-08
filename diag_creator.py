@@ -15,29 +15,22 @@ def get_organizations_from_database():
     
     try:
         response = requests.get(url, headers=headers)
-        #st.write(f"Debug: Response status code: {response.status_code}")
-        #st.write(f"Debug: Response headers: {dict(response.headers)}")
         
         if response.status_code == 200:
             orgs = response.json()
-            #st.write(f"Debug: Raw response: {orgs}")
-            #st.write(f"Debug: Number of organizations found: {len(orgs)}")
             
             if not orgs:
                 st.warning("No organizations found in database")
-                return ["dummy organisation"]
+                return []
             
-            names = [org['name'] for org in orgs if org.get('name')]
-            #st.write(f"Debug: Extracted names: {names}")
+            names = [org['name'] for org in orgs if org.get("status") == "ongoing"]
             return names
         else:
             st.warning(f"Failed to fetch organizations: {response.status_code}")
-            st.write(f"Debug: Error response: {response.text}")
-            return ["dummy organisation"]
+            return []
     except Exception as e:
         st.warning(f"Error fetching organizations: {e}")
-        st.write(f"Debug: Exception type: {type(e)}")
-        return ["dummy organisation"]
+        return []
 
 
 def post_orga_to_database(orga_name, description):
