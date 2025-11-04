@@ -29,6 +29,10 @@ with open("styles.css") as f:
 DATABASE_URL = st.secrets["DATABASE_URL"]
 DATABASE_API_KEY = st.secrets["DATABASE_API_KEY"]
 
+# Language state and URL sync helpers
+def tr(fr: str, en: str) -> str:
+    return en if st.session_state.get('lang', 'fr') == 'en' else fr
+
 #the fmunctions below are to prevent the loss of answers if the user accifentally refreshes the page
 # Initialize session state from URL parameters on page load
 
@@ -41,6 +45,10 @@ def init_from_url():
     
     if 'orga' not in st.session_state:
         st.session_state.orga = params.get('orga', '')
+    
+    # Language (fr|en)
+    if 'lang' not in st.session_state:
+        st.session_state.lang = params.get('lang', 'fr')
     
     # Initialize selections from URL - FIXED to properly filter empty strings
     if 'selected_mots_cles' not in st.session_state:
@@ -75,6 +83,7 @@ def update_url():
     st.query_params.update({
         'user': st.session_state.user,
         'orga': st.session_state.orga,
+        'lang': st.session_state.lang,
         'mots': mots_str,
         'loisirs': loisirs_str,
         'questions': questions_str,
@@ -214,9 +223,13 @@ def display_personality_card(name, score, image_path, description, background_co
     # Ceate and display bar chart
         color_map = {
             'Ingénieur': "#667eea",
+            'Engineer': "#667eea",
             'Cartographe': "#28961a",
+            'Cartographer': "#28961a",
             'Barde': "#f5576c",
-            'Inventeur': "#fd9666"
+            'Bard': "#f5576c",
+            'Inventeur': "#fd9666",
+            'Inventor': "#fd9666"
         }
         bar_chart = create_bar_chart(score, color_map.get(name, '#666666'))
         
@@ -243,21 +256,48 @@ def display_personality_card(name, score, image_path, description, background_co
 
 st.set_page_config(layout='wide', page_icon=icon, page_title='E-diag Profiler')
 
-A_text = """L'ingénieur aime bien résoudre des problèmes en utilisant la méthode scientifique et le raisonnement logique. 
+# Language toggle UI
+lang_toggle = st.toggle('English', value=st.session_state.get('lang', 'fr') == 'en')
+if lang_toggle and st.session_state.get('lang') != 'en':
+    st.session_state.lang = 'en'
+    update_url()
+    st.rerun()
+elif (not lang_toggle) and st.session_state.get('lang') != 'fr':
+    st.session_state.lang = 'fr'
+    update_url()
+    st.rerun()
+
+A_text_fr = """L'ingénieur aime bien résoudre des problèmes en utilisant la méthode scientifique et le raisonnement logique. 
 Il est dans la réflexion et est capable de conceptualiser des notions abstraites. C'est une personnalité plutôt introvertie qui aime analyser et savoir.\n
 ***Points de force*** : compilent les faits, analysent, argumentent rationnellement, formulent des théories, mesurent précisément, résolvent les problèmes logiquement, 
-raisonnent, comprennent les éléments techniques, analysent avec l’esprit critique, travaillent à partir de chiffres, de statistiques, et sont précis."""
+raisonnent, comprennent les éléments techniques, analysent avec l'esprit critique, travaillent à partir de chiffres, de statistiques, et sont précis."""
 
-B_text = """Le cartographe est prudent et organisé. Il a des habitudes bien précises et respecte soigneusement les règles.
+B_text_fr = """Le cartographe est prudent et organisé. Il a des habitudes bien précises et respecte soigneusement les règles.
 Il planifie méticuleusement ce qui doit être fait et se retrouve bien dans les tâches administratif ou son souci du détail est sa fiabilité est valorisé.\n
-***Points de force*** : remarquent les défauts, approchent les problèmes pratiquement, vont jusqu’au bout des choses, développent des plans détaillés et des procédures, et envisagent les problèmes sous l’angle du planning."""
+***Points de force*** : remarquent les défauts, approchent les problèmes pratiquement, vont jusqu'au bout des choses, développent des plans détaillés et des procédures, et envisagent les problèmes sous l'angle du planning."""
 
-C_text = """Le barde aime le contact humain. Il est empathique, relationnel et amicale. Il est expressif et communique bien avec les autres.\n
-***Points de force*** : comprennent les difficultés relationnelles, anticipent le ressenti des autres, comprennent intuitivement le ressenti des autres, perçoivent des éléments non verbaux issus du stress, engendrent l’enthousiasme, persuadent, concilient, enseignent, partagent, comprennent les éléments émotionnels, prennent en compte les valeurs."""
+C_text_fr = """Le barde aime le contact humain. Il est empathique, relationnel et amicale. Il est expressif et communique bien avec les autres.\n
+***Points de force*** : comprennent les difficultés relationnelles, anticipent le ressenti des autres, comprennent intuitivement le ressenti des autres, perçoivent des éléments non verbaux issus du stress, engendrent l'enthousiasme, persuadent, concilient, enseignent, partagent, comprennent les éléments émotionnels, prennent en compte les valeurs."""
 
-D_text = """L'inventeur est un aventurier avec une imagination débordante qui rêve éveillé. C'est un visionnaire qui a toujours des idées très originales.
-C'est aussi un revel qui aime bien prendre des risuqes et se projeter.\n
-***Points de force*** : Lisent les signes du changement, voient les choses globalement, reconnaissent les nouvelles possibilités, tolèrent l’ambiguïté, intègrent les idées et les concepts, défient les règles établies, synthétisent les éléments divers en un nouveau tout, inventent des solutions nouvelles, résolvent les problèmes de manière intuitive, intègrent en simultané différents inputs."""
+D_text_fr = """L'inventeur est un aventurier avec une imagination débordante qui rêve éveillé. C'est un visionnaire qui a toujours des idées très originales.
+C'est aussi un rebel qui aime bien prendre des risuqes et se projeter.\n
+***Points de force*** : Lisent les signes du changement, voient les choses globalement, reconnaissent les nouvelles possibilités, tolèrent l'ambiguïté, intègrent les idées et les concepts, défient les règles établies, synthétisent les éléments divers en un nouveau tout, inventent des solutions nouvelles, résolvent les problèmes de manière intuitive, intègrent en simultané différents inputs."""
+
+A_text_en = """The Engineer enjoys solving problems using scientific methods and logical reasoning.
+They reflect deeply and can conceptualize abstract ideas. Often introverted, they like to analyze and understand.\n
+***Strengths***: compile facts, analyze, argue rationally, form theories, perform precise measurements, solve problems logically, 
+reason using critical thinking, understand technical matters, work with numbers and statistics."""
+
+B_text_en = """The Cartographer is careful and organized, with well-defined habits and strong respect for rules.
+They plan meticulously and thrive in administrative tasks where attention to detail and reliability are valued.\n
+***Strengths***: notice defects, take practical approaches, follow through, develop detailed plans and procedures, and think in terms of schedules."""
+
+C_text_en = """The Bard thrives on human connection: empathetic, relational, and friendly. Expressive and a strong communicator.\n
+***Strengths***: understand relational challenges, anticipate others' feelings, read nonverbal stress cues, generate enthusiasm, persuade, reconcile, teach, share, consider emotional factors and values."""
+
+D_text_en = """The Inventor is an adventurous visionary with a vivid imagination and original ideas.
+They challenge conventions and like to take risks and project into the future.\n
+***Strengths***: read signs of change, see the big picture, spot new possibilities, tolerate ambiguity, integrate ideas and concepts, challenge established rules, synthesize diverse inputs, invent new solutions, solve problemns using intuition, integrate inputs simultaneously."""
 
 try:
     st.image('baniere_profiler.png', use_container_width=True)
@@ -266,9 +306,9 @@ except:
 
 # User input with session state
 user = st.text_input(
-    'Renseignez pseudo', 
+    tr('Renseignez pseudo', 'Enter a username'), 
     value=st.session_state.user,
-    placeholder='Votre pseudo ici',
+    placeholder=tr('Votre pseudo ici', 'Your username here'),
     key='user_input'
 )
 
@@ -293,16 +333,16 @@ def get_organizations_from_database():
             orgs = response.json()
             
             if not orgs:
-                st.warning("No organizations found in database")
+                st.warning(tr("Aucune organisation trouvée dans la base de données", "No organizations found in database"))
                 return []
             
             names = [org['name'] for org in orgs if org.get("status") == "ongoing"]
             return names
         else:
-            st.warning(f"Failed to fetch organizations: {response.status_code}")
+            st.warning(tr(f"Échec de la récupération des organisations : {response.status_code}", f"Failed to fetch organizations: {response.status_code}"))
             return []
     except Exception as e:
-        st.warning(f"Error fetching organizations: {e}")
+        st.warning(tr(f"Erreur lors de la récupération des organisations : {e}", f"Error fetching organizations: {e}"))
         return []
 
 # fetch organization list from database
@@ -315,10 +355,10 @@ if st.session_state.orga and st.session_state.orga in list_of_orga:
     orga_index = list_of_orga.index(st.session_state.orga)
 
 orga = st.selectbox(
-    "Choisissez l'id du test",
+    tr("Choisissez l'id du test", "Choose test id"),
     list_of_orga,
     index=orga_index,
-    placeholder="Choisissez l'id du test",
+    placeholder=tr("Choisissez l'id du test", "Choose test id"),
     key='orga_select'
 )
 
@@ -336,11 +376,24 @@ personality_scores = {
 
 ########## USER INTERFACE ##########
 
-st.header('Activités de Travail')
-st.write("Parmi les activités ci-dessous, cochez celles que vous faites bien, ou très bien")
+# Initialize session state for all button selections if not exists
+if 'selected_activities' not in st.session_state:
+    st.session_state.selected_activities = set()
+if 'selected_mots_cles' not in st.session_state:
+    st.session_state.selected_mots_cles = set()
+if 'selected_loisirs' not in st.session_state:
+    st.session_state.selected_loisirs = set()
+if 'selected_questions' not in st.session_state:
+    st.session_state.selected_questions = set()
+if 'selected_phrases' not in st.session_state:
+    st.session_state.selected_phrases = set()
 
-# List of activities
-activites = [
+st.header(tr('Activités de Travail', 'Work Activities'))
+st.write(tr("Parmi les activités ci-dessous, cochez celles que vous faites bien, ou très bien",
+            "From the activities below, select those you do well or very well"))
+
+# List of activities in French
+activites_fr = [
     'Analyser',
     'Administrer',
     'Conceptualiser',
@@ -358,6 +411,27 @@ activites = [
     'Planifier',
     'Animer (réunion)'
 ]
+
+activites_en = [
+    'Analyze',
+    'Administer',
+    'Conceptualize',
+    'Express ideas',
+    'Synthesize',
+    'Organize',
+    'Rationalize',
+    'Implement',
+    'Exchange (contact)',
+    'Solve problems',
+    'Innovate',
+    'Teach/train',
+    'Create',
+    'Calculate',
+    'Plan',
+    'Facilitate (meeting)'
+]
+
+activites = activites_en if st.session_state.lang == 'en' else activites_fr
 
 # Initialize session state for button selections if not exists
 if 'selected_activities' not in st.session_state:
@@ -385,9 +459,9 @@ for idx, act in enumerate(activites):
             update_url()  # Save to URL after each change
             st.rerun()
 
-# Calculate personality scores based on selected activities
-# Activity to personality type mapping
-activity_mapping = {
+st.write(st.session_state.selected_activities)
+
+activity_mapping_fr = {
     'Analyser': 'A',
     'Administrer': 'B',
     'Conceptualiser': 'D',
@@ -406,23 +480,37 @@ activity_mapping = {
     'Animer (réunion)': 'C'
 }
 
+activity_mapping_en = {
+    'Analyze' : 'A',
+    'Administer' : 'B',
+    'Conceptualize' : 'D',
+    'Express ideas' : 'C',
+    'Synthesize' : 'D',
+    'Organize' : 'B',
+    'Rationalize' : 'A',
+    'Implement' : 'B',
+    'Exchange (contact)' : 'C',
+    'Solve problems' : 'A',
+    'Innovate' : 'D',
+    'Teach/train' : 'C',
+    'Create' : 'D',
+    'Calculate' : 'A',
+    'Plan' : 'B',
+    'Facilitate (meeting)' : 'C'
+}
+
+# Accept both French and English labels regardless of current UI language
+activity_mapping_all = {}
+activity_mapping_all.update(activity_mapping_fr)
+activity_mapping_all.update(activity_mapping_en)
+
 # Calculate scores
 for act in st.session_state.selected_activities:
-    if act in activity_mapping:
-        personality_scores[activity_mapping[act]] += 1
-
-# Initialize session state for all button selections if not exists
-if 'selected_mots_cles' not in st.session_state:
-    st.session_state.selected_mots_cles = set()
-if 'selected_loisirs' not in st.session_state:
-    st.session_state.selected_loisirs = set()
-if 'selected_questions' not in st.session_state:
-    st.session_state.selected_questions = set()
-if 'selected_phrases' not in st.session_state:
-    st.session_state.selected_phrases = set()
+    if act in activity_mapping_all:
+        personality_scores[activity_mapping_all[act]] += 1
 
 # Mapping dictionaries
-mots_cles_mapping = {
+mots_cles_mapping_fr = {
     'Logique': 'A', 'Serviable': 'C', 'Organisé': 'B', 'Confiant': 'C',
     'Rationnel': 'A', 'Conservateur': 'B', 'Expressif': 'C', 'Analytique': 'A',
     'Émotif': 'C', 'Lecteur technique': 'B', 'Réaliste': 'A', 'Créatif': 'D',
@@ -436,7 +524,25 @@ mots_cles_mapping = {
     'Indépendant': 'D'
 }
 
-loisirs_mapping = {
+mots_cles_mapping_en = {
+    'Logical': 'A', 'Helpful': 'C', 'Organized': 'B', 'Confident': 'C',
+    'Rational': 'A', 'Conservative': 'B', 'Expressive': 'C', 'Analytical': 'A',
+    'Emotional': 'C', 'Technical Reader': 'B', 'Realistic': 'A', 'Creative': 'D',
+    'Intuitive: Feelings': 'C', 'Passionate': 'C', 'Critical': 'A', 'Friendly': 'C',
+    'Objective': 'A', 'Imaginative': 'D', 'Cooperative': 'C', 'Enthusiastic': 'C',
+    'Level-headed': 'A', 'Artistic': 'D', 'Flexible': 'C', 'Discreet': 'A',
+    'Precise': 'A', 'Controlled': 'B', 'Serious': 'A', 'Tenacious': 'B',
+    'Meticulous': 'B', 'Intuitive: Solutions': 'D', 'Simultaneous': 'D',
+    'Competitive': 'B', 'Adventurous': 'D', 'Organized': 'B', 'Liberal': 'D',
+    'Disciplined': 'B', 'Curious': 'D', 'Conventional': 'B', 'Original': 'D',
+    'Independent': 'D'
+}
+
+mots_cles_mapping_all = {}
+mots_cles_mapping_all.update(mots_cles_mapping_fr)
+mots_cles_mapping_all.update(mots_cles_mapping_en)
+
+loisirs_mapping_fr = {
     'Photographie': 'D', 'Farniente': 'D', 'Radioamateur': 'A', 'Chasse': 'A',
     'Pêche': 'B', 'Jardinage': 'C', 'Travail du bois': 'A', 'Musique': 'C',
     'Jogging': 'B', 'Réparation de voitures': 'A', 'Chant': 'C', 'Bénévolat': 'C',
@@ -448,7 +554,23 @@ loisirs_mapping = {
     'Bowling': 'B'
 }
 
-questions_mapping = {
+loisirs_mapping_en = {
+    'Photography': 'D', 'Lazing about': 'D', 'Amateur radio': 'A', 'Hunting': 'A',
+    'Fishing': 'B', 'Gardening': 'C', 'Woodworking': 'A', 'Music': 'C',
+    'Jogging': 'B', 'Car Repair': 'A', 'Singing': 'C', 'Volunteering': 'C',
+    'Reading': 'C', 'DIY': 'A', 'Sports Spectator': 'B', 'Collecting': 'B',
+    'Gambling': 'D', 'Crafts': 'D', 'Cooking': 'B', 'Conversation': 'C',
+'Theater': 'D', 'Card games': 'B', 'Spearfishing': 'D', 'Travel': 'C',
+    'Botany': 'B', 'Golf': 'A', 'Computers': 'A', 'Dancing': 'D',
+    'Strategy games': 'D', 'Logic games': 'A', 'Board games': 'C',
+    'Bowling': 'B'
+}
+
+loisirs_mapping_all = {}
+loisirs_mapping_all.update(loisirs_mapping_fr)
+loisirs_mapping_all.update(loisirs_mapping_en)
+
+questions_mapping_fr = {
     'Pratiquer des jeux de logique': 'A',
     'Dresser un arbre généalogique': 'B',
     'Prendre la voiture ou le vélo et rouler sans but': 'D',
@@ -471,7 +593,34 @@ questions_mapping = {
     'Pratiquer le modélisme': 'B'
 }
 
-phrases_mapping = {
+questions_mapping_en = {
+    'Playing logic games': 'A',
+    'Drawing up a family tree': 'B',
+    'Taking the car or bike and riding around aimlessly': 'D',
+    'Assembling a kit following the instructions': 'B',
+    'Playing with children': 'C',
+    'Daydreaming': 'D',
+    'Creating logos': 'D',
+    'Organizing photographs': 'B',
+    'Going out with friends and partying': 'C',
+    'Flying a kite': 'D',
+    'Cooking up a dish of your own invention': 'D',
+    'Using (or learning to use) a computer': 'A',
+    'Fixing broken machines or appliances': 'A',
+    'Listening to music': 'C',
+    'Spotting typos in a book or errors on a bank statement': 'B',
+    'Feeling emotional when looking at a landscape, painting, or scene': 'C',
+    'Joining a stock market investment club': 'A',
+    "Playing devil's advocate in a discussion": 'A',
+    'Leading a club or circle': 'C',
+    'Model making': 'B'
+}
+
+questions_mapping_all = {}
+questions_mapping_all.update(questions_mapping_fr)
+questions_mapping_all.update(questions_mapping_en)
+
+phrases_mapping_fr = {
     "J'attends des résultats concrets.": 'A',
     'Mettre les points sur les i.': 'B',
     'Je suis comme Saint Thomas...': 'A',
@@ -490,11 +639,36 @@ phrases_mapping = {
     'La valeur humaine': 'C'
 }
 
-# --- MOTS CLÉS ---
-st.header('Mots clés')
-st.write("Dans la liste ci-dessous, sélectionnez 10 adjectifs qui vous caractérisent le mieux")
+phrases_mapping_en = {
+    "I'm waiting for concrete results.": 'A',
+    "Dot the i's and cross the t's.": 'B',
+    "I'm like Saint Thomas...": 'A',
+    'You know what I mean...': 'D',
+    "Be a team player": 'C',
+    "Let's imagine that...": 'D',
+    'Feeling good about yourself.': 'C',
+    "It's dangerous.": 'B',
+    'What if...': 'D',
+    "Let's be serious.": 'A',
+    "Be bold, always be bold...": 'D',
+    "I have a feeling that...": 'C',
+    "Criticism is needed.": 'A',
+    "Let's proceed in order.": 'B',
+    "No one is supposed to be ignorant of the law.": 'B',
+    'Human value': 'C'
+}
 
-mots_cles_list = list(mots_cles_mapping.keys())
+phrases_mapping_all = {}
+phrases_mapping_all.update(phrases_mapping_fr)
+phrases_mapping_all.update(phrases_mapping_en)
+
+# --- MOTS CLÉS ---
+st.header(tr('Mots clés', 'Keywords'))
+st.write(tr('Dans la liste ci-dessous, sélectionnez 10 adjectifs qui vous caractérisent le mieux',
+            'From the list below, select 10 adjectives that best describe you'))
+
+mots_cles_list = list(mots_cles_mapping_fr.keys()) if st.session_state.lang == 'fr' else list(mots_cles_mapping_en.keys())
+
 mid_point = len(mots_cles_list) // 2
 
 col1, col2 = st.columns(2)
@@ -532,16 +706,17 @@ with col2:
             st.rerun()
 
 selected_mots = len(st.session_state.selected_mots_cles)
-st.write(f'Vous avez sélectionné {selected_mots} mots clés')
+st.write(tr(f'Vous avez sélectionné {selected_mots} mots clés', f'You have selected {selected_mots} keywords'))
 
 if selected_mots > 10:
-    st.error('Vous ne pouvez selectionner que 10 mots clés', icon='😢')
+    st.error(tr('Vous ne pouvez selectionner que 10 mots clés', 'You can select only 10 keywords'), icon='😢')
 
 # --- LOISIRS ---
-st.header('Loisirs')
-st.write('Selectionnez les loisirs que vous pratiquez ou que vous aimeriez pratiquer')
+st.header(tr('Loisirs', 'Hobbies'))
+st.write(tr('Selectionnez les loisirs que vous pratiquez ou que vous aimeriez pratiquer',
+            'Select the hobbies you do or would like to do'))
 
-loisirs_list = list(loisirs_mapping.keys())
+loisirs_list = list(loisirs_mapping_fr.keys()) if st.session_state.lang == 'fr' else list(loisirs_mapping_en.keys())
 mid_point_loisirs = len(loisirs_list) // 2
 
 col1, col2 = st.columns(2)
@@ -578,10 +753,11 @@ with col2:
             st.rerun()
 
 # --- 20 QUESTIONS ---
-st.header('20 Questions')
-st.write('Sélectionnez les activités que vous aimez ou aimeriez pratiquer.')
+st.header(tr('20 Questions', '20 Questions'))
+st.write(tr('Sélectionnez les activités que vous aimez ou aimeriez pratiquer.',
+            'Select the activities you like or would like to do.'))
 
-questions_list = list(questions_mapping.keys())
+questions_list = list(questions_mapping_fr.keys()) if st.session_state.lang == 'fr' else list(questions_mapping_en.keys())
 mid_point_questions = len(questions_list) // 2
 
 col1, col2 = st.columns(2)
@@ -618,10 +794,10 @@ with col2:
             st.rerun()
 
 # --- PHRASES ET EXPRESSIONS ---
-st.header('Vos phrases et expressions')
-st.write('Cochez les expressions que vous utilisez souvent')
+st.header(tr('Vos phrases et expressions', 'Your phrases and expressions'))
+st.write(tr('Cochez les expressions que vous utilisez souvent', 'Select the expressions you often use'))
 
-phrases_list = list(phrases_mapping.keys())
+phrases_list = list(phrases_mapping_fr.keys()) if st.session_state.lang == 'fr' else list(phrases_mapping_en.keys())
 mid_point_phrases = len(phrases_list) // 2
 
 col1, col2 = st.columns(2)
@@ -658,46 +834,47 @@ with col2:
             st.rerun()
 
 # --- CALCULATE PERSONALITY SCORES ---
-personality_scores = {'A': 0, 'B': 0, 'C': 0, 'D': 0}
-
 # Add scores from mots clés
 for mot in st.session_state.selected_mots_cles:
-    if mot in mots_cles_mapping:
-        personality_scores[mots_cles_mapping[mot]] += 1
+    if mot in mots_cles_mapping_all:
+        personality_scores[mots_cles_mapping_all[mot]] += 1
 
 # Add scores from loisirs
 for loisir in st.session_state.selected_loisirs:
-    if loisir in loisirs_mapping:
-        personality_scores[loisirs_mapping[loisir]] += 1
+    if loisir in loisirs_mapping_all:
+        personality_scores[loisirs_mapping_all[loisir]] += 1
 
 # Add scores from questions
 for question in st.session_state.selected_questions:
-    if question in questions_mapping:
-        personality_scores[questions_mapping[question]] += 1
+    if question in questions_mapping_all:
+        personality_scores[questions_mapping_all[question]] += 1
 
 # Add scores from phrases
 for phrase in st.session_state.selected_phrases:
-    if phrase in phrases_mapping:
-        personality_scores[phrases_mapping[phrase]] += 1
+    if phrase in phrases_mapping_all:
+        personality_scores[phrases_mapping_all[phrase]] += 1
 
 
-submit = st.button('Calculer le résultat')
+st.write(personality_scores)
+
+submit = st.button(tr('Calculer le résultat', 'Calculate result'))
 if 'results_posted' not in st.session_state:
     st.session_state['results_posted'] = False
 
 if submit:
     if max(personality_scores.values()) == 0:
-            st.error('Vous devez remplir au moins une des catégories pour pouvoir calculer le résultat', icon='🥺')
+            st.error(tr('Vous devez remplir au moins une des catégories pour pouvoir calculer le résultat',
+                        'You must fill at least one category to calculate the result'), icon='🥺')
     coef = 100/max(personality_scores.values())
     A_score = coef*personality_scores.get('A')
     B_score = coef*personality_scores.get('B')
     C_score = coef*personality_scores.get('C')
     D_score = coef*personality_scores.get('D')
     
-    st.write(f'Ingénieur: {A_score}')
-    st.write(f'Cartographe: {B_score}')
-    st.write(f'Barde: {C_score}')
-    st.write(f'Inventeur: {D_score}')
+    st.write(tr(f'Ingénieur: {A_score}', f'Engineer: {A_score}'))
+    st.write(tr(f'Cartographe: {B_score}', f'Cartographer: {B_score}'))
+    st.write(tr(f'Barde: {C_score}', f'Bard: {C_score}'))
+    st.write(tr(f'Inventeur: {D_score}', f'Inventor: {D_score}'))
     
     # Get the current timestamp
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -735,71 +912,123 @@ if submit:
     # --- PILOTS (>99) ---
     pilots = [k for k, v in scores.items() if v > 99]
     if pilots:
-        st.markdown("<h1 style='text-align: center; margin: 40px 0;'>🚀 Vos pilotes</h1>", unsafe_allow_html=True)
+        st.markdown(tr("<h1 style='text-align: center; margin: 40px 0;'>🚀 Vos pilotes</h1>",
+                       "<h1 style='text-align: center; margin: 40px 0;'>🚀 Your pilots</h1>"), unsafe_allow_html=True)
         
         for pilot in pilots:
+            display_name = {
+                'Ingénieur': tr('Ingénieur', 'Engineer'),
+                'Cartographe': tr('Cartographe', 'Cartographer'),
+                'Barde': tr('Barde', 'Bard'),
+                'Inventeur': tr('Inventeur', 'Inventor')
+            }[pilot]
+            desc_map = {
+                'Ingénieur': A_text_en if st.session_state.lang == 'en' else A_text_fr,
+                'Cartographe': B_text_en if st.session_state.lang == 'en' else B_text_fr,
+                'Barde': C_text_en if st.session_state.lang == 'en' else C_text_fr,
+                'Inventeur': D_text_en if st.session_state.lang == 'en' else D_text_fr,
+            }
             if pilot == 'Ingénieur':
-                display_personality_card('Ingénieur', A_score, 'Inge.png', A_text, solid_colors['Ingénieur'])
+                display_personality_card(display_name, A_score, 'Inge.png', desc_map['Ingénieur'], solid_colors['Ingénieur'])
             elif pilot == 'Cartographe':
-                display_personality_card('Cartographe', B_score, 'carto.png', B_text, solid_colors['Cartographe'])
+                display_personality_card(display_name, B_score, 'carto.png', desc_map['Cartographe'], solid_colors['Cartographe'])
             elif pilot == 'Barde':
-                display_personality_card('Barde', C_score, 'bard.png', C_text, solid_colors['Barde'])
+                display_personality_card(display_name, C_score, 'bard.png', desc_map['Barde'], solid_colors['Barde'])
             elif pilot == 'Inventeur':
-                display_personality_card('Inventeur', D_score, 'artistii.png', D_text, solid_colors['Inventeur'])
+                display_personality_card(display_name, D_score, 'artistii.png', desc_map['Inventeur'], solid_colors['Inventeur'])
     # --- CO-PILOTS (75-99) ---
     copilots = [k for k, v in scores.items() if 75 <= v < 100]
     if copilots:
-        st.markdown("<h1 style='text-align: center; margin: 40px 0;'>🤝 Vos co-pilotes</h1>", unsafe_allow_html=True)
+        st.markdown(tr("<h1 style='text-align: center; margin: 40px 0;'>🤝 Vos co-pilotes</h1>",
+                       "<h1 style='text-align: center; margin: 40px 0;'>🤝 Your co-pilots</h1>"), unsafe_allow_html=True)
         
         for copilot in copilots:
+            display_name = {
+                'Ingénieur': tr('Ingénieur', 'Engineer'),
+                'Cartographe': tr('Cartographe', 'Cartographer'),
+                'Barde': tr('Barde', 'Bard'),
+                'Inventeur': tr('Inventeur', 'Inventor')
+            }[copilot]
+            desc_map = {
+                'Ingénieur': A_text_en if st.session_state.lang == 'en' else A_text_fr,
+                'Cartographe': B_text_en if st.session_state.lang == 'en' else B_text_fr,
+                'Barde': C_text_en if st.session_state.lang == 'en' else C_text_fr,
+                'Inventeur': D_text_en if st.session_state.lang == 'en' else D_text_fr,
+            }
             if copilot == 'Ingénieur':
-                display_personality_card('Ingénieur', A_score, 'Inge.png', A_text, solid_colors['Ingénieur'])
+                display_personality_card(display_name, A_score, 'Inge.png', desc_map['Ingénieur'], solid_colors['Ingénieur'])
             elif copilot == 'Cartographe':
-                display_personality_card('Cartographe', B_score, 'carto.png', B_text, solid_colors['Cartographe'])
+                display_personality_card(display_name, B_score, 'carto.png', desc_map['Cartographe'], solid_colors['Cartographe'])
             elif copilot == 'Barde':
-                display_personality_card('Barde', C_score, 'bard.png', C_text, solid_colors['Barde'])
+                display_personality_card(display_name, C_score, 'bard.png', desc_map['Barde'], solid_colors['Barde'])
             elif copilot == 'Inventeur':
-                display_personality_card('Inventeur', D_score, 'artistii.png', D_text, solid_colors['Inventeur'])
+                display_personality_card(display_name, D_score, 'artistii.png', desc_map['Inventeur'], solid_colors['Inventeur'])
     else:
-        st.info("Nous n'avons pas détecté de co-pilote")
+        st.info(tr("Nous n'avons pas détecté de co-pilote", "We did not detect any co-pilot"))
     # --- FAILLES (15-40) ---
     failles = [k for k, v in scores.items() if 15 < v < 40]
     if failles:
-        st.markdown("<h1 style='text-align: center; margin: 40px 0;'>⚠️ Vos failles</h1>", unsafe_allow_html=True)
+        st.markdown(tr("<h1 style='text-align: center; margin: 40px 0;'>⚠️ Vos failles</h1>",
+                       "<h1 style='text-align: center; margin: 40px 0;'>⚠️ Your weaknesses</h1>"), unsafe_allow_html=True)
         
         for faille in failles:
+            display_name = {
+                'Ingénieur': tr('Ingénieur', 'Engineer'),
+                'Cartographe': tr('Cartographe', 'Cartographer'),
+                'Barde': tr('Barde', 'Bard'),
+                'Inventeur': tr('Inventeur', 'Inventor')
+            }[faille]
+            desc_map = {
+                'Ingénieur': A_text_en if st.session_state.lang == 'en' else A_text_fr,
+                'Cartographe': B_text_en if st.session_state.lang == 'en' else B_text_fr,
+                'Barde': C_text_en if st.session_state.lang == 'en' else C_text_fr,
+                'Inventeur': D_text_en if st.session_state.lang == 'en' else D_text_fr,
+            }
             if faille == 'Ingénieur':
-                display_personality_card('Ingénieur', A_score, 'Inge.png', A_text, solid_colors['Ingénieur'])
+                display_personality_card(display_name, A_score, 'Inge.png', desc_map['Ingénieur'], solid_colors['Ingénieur'])
             elif faille == 'Cartographe':
-                display_personality_card('Cartographe', B_score, 'carto.png', B_text, solid_colors['Cartographe'])
+                display_personality_card(display_name, B_score, 'carto.png', desc_map['Cartographe'], solid_colors['Cartographe'])
             elif faille == 'Barde':
-                display_personality_card('Barde', C_score, 'bard.png', C_text, solid_colors['Barde'])
+                display_personality_card(display_name, C_score, 'bard.png', desc_map['Barde'], solid_colors['Barde'])
             elif faille == 'Inventeur':
-                display_personality_card('Inventeur', D_score, 'artistii.png', D_text, solid_colors['Inventeur'])
+                display_personality_card(display_name, D_score, 'artistii.png', desc_map['Inventeur'], solid_colors['Inventeur'])
     else:
-        st.info("Nous n'avons pas détecté de failles")
+        st.info(tr("Nous n'avons pas détecté de failles", "We did not detect any weaknesses"))
     # --- LIMITES (<15) ---
     limites = [k for k, v in scores.items() if v <= 15]
     if limites:
-        st.markdown("<h1 style='text-align: center; margin: 40px 0;'>🚧 Vos limites</h1>", unsafe_allow_html=True)
+        st.markdown(tr("<h1 style='text-align: center; margin: 40px 0;'>🚧 Vos limites</h1>",
+                       "<h1 style='text-align: center; margin: 40px 0;'>🚧 Your limits</h1>"), unsafe_allow_html=True)
         
         for limite in limites:
+            display_name = {
+                'Ingénieur': tr('Ingénieur', 'Engineer'),
+                'Cartographe': tr('Cartographe', 'Cartographer'),
+                'Barde': tr('Barde', 'Bard'),
+                'Inventeur': tr('Inventeur', 'Inventor')
+            }[limite]
+            desc_map = {
+                'Ingénieur': A_text_en if st.session_state.lang == 'en' else A_text_fr,
+                'Cartographe': B_text_en if st.session_state.lang == 'en' else B_text_fr,
+                'Barde': C_text_en if st.session_state.lang == 'en' else C_text_fr,
+                'Inventeur': D_text_en if st.session_state.lang == 'en' else D_text_fr,
+            }
             if limite == 'Ingénieur':
-                display_personality_card('Ingénieur', A_score, 'Inge.png', A_text, solid_colors['Ingénieur'])
+                display_personality_card(display_name, A_score, 'Inge.png', desc_map['Ingénieur'], solid_colors['Ingénieur'])
             elif limite == 'Cartographe':
-                display_personality_card('Cartographe', B_score, 'carto.png', B_text, solid_colors['Cartographe'])
+                display_personality_card(display_name, B_score, 'carto.png', desc_map['Cartographe'], solid_colors['Cartographe'])
             elif limite == 'Barde':
-                display_personality_card('Barde', C_score, 'bard.png', C_text, solid_colors['Barde'])
+                display_personality_card(display_name, C_score, 'bard.png', desc_map['Barde'], solid_colors['Barde'])
             elif limite == 'Inventeur':
-                display_personality_card('Inventeur', D_score, 'artistii.png', D_text, solid_colors['Inventeur'])
+                display_personality_card(display_name, D_score, 'artistii.png', desc_map['Inventeur'], solid_colors['Inventeur'])
     else:
-        st.info("Nous n'avons pas détecté de limites")
+        st.info(tr("Nous n'avons pas détecté de limites", "We did not detect any limits"))
     # Display the download button
     if os.path.exists(result_filename):
         st.download_button(
-            label="Télecharger les Résultats",
+            label=tr("Télecharger les Résultats", "Download Results"),
             data=open(result_filename, 'rb'),
             key="download_results",
             file_name="results.txt",
-            help="Click to download the results as a text file.",
+            help=tr("Cliquez pour télécharger les résultats sous forme de fichier texte.", "Click to download the results as a text file."),
         )
