@@ -459,7 +459,7 @@ for idx, act in enumerate(activites):
             update_url()  # Save to URL after each change
             st.rerun()
 
-st.write(st.session_state.selected_activities)
+#st.write(st.session_state.selected_activities)
 
 activity_mapping_fr = {
     'Analyser': 'A',
@@ -855,7 +855,7 @@ for phrase in st.session_state.selected_phrases:
         personality_scores[phrases_mapping_all[phrase]] += 1
 
 
-st.write(personality_scores)
+#st.write(personality_scores)
 
 submit = st.button(tr('Calculer le résultat', 'Calculate result'))
 if 'results_posted' not in st.session_state:
