@@ -256,16 +256,6 @@ def display_personality_card(name, score, image_path, description, background_co
 
 st.set_page_config(layout='wide', page_icon=icon, page_title='E-diag Profiler')
 
-# Language toggle UI
-lang_toggle = st.toggle('English', value=st.session_state.get('lang', 'fr') == 'en')
-if lang_toggle and st.session_state.get('lang') != 'en':
-    st.session_state.lang = 'en'
-    update_url()
-    st.rerun()
-elif (not lang_toggle) and st.session_state.get('lang') != 'fr':
-    st.session_state.lang = 'fr'
-    update_url()
-    st.rerun()
 
 A_text_fr = """L'ingénieur aime bien résoudre des problèmes en utilisant la méthode scientifique et le raisonnement logique. 
 Il est dans la réflexion et est capable de conceptualiser des notions abstraites. C'est une personnalité plutôt introvertie qui aime analyser et savoir.\n
@@ -303,6 +293,25 @@ try:
     st.image('baniere_profiler.png', use_container_width=True)
 except:
     st.image('baniere_profiler.png', use_column_width=True)
+
+# Language toggle UI
+languages = {
+    'fr': '🇫🇷 Français',
+    'en': '🇬🇧 English'
+}
+
+current_lang = st.session_state.get('lang', 'fr')
+selected_lang = st.selectbox(
+    '',
+    options=list(languages.keys()),
+    format_func=lambda x: languages[x],
+    index=list(languages.keys()).index(current_lang)
+)
+
+if selected_lang != current_lang:
+    st.session_state.lang = selected_lang
+    update_url()
+    st.rerun()
 
 # User input with session state
 user = st.text_input(
@@ -388,7 +397,7 @@ if 'selected_questions' not in st.session_state:
 if 'selected_phrases' not in st.session_state:
     st.session_state.selected_phrases = set()
 
-st.header(tr('Activités de Travail', 'Work Activities'))
+st.header(tr('Vos activités au travail', 'Your work Activities'))
 st.write(tr("Parmi les activités ci-dessous, cochez celles que vous faites bien, ou très bien",
             "From the activities below, select those you do well or very well"))
 
@@ -549,7 +558,7 @@ loisirs_mapping_fr = {
     'Lecture': 'C', 'Bricolage': 'A', 'Spectateur sportif': 'B', 'Collections': 'B',
     'Jeux de hasard': 'D', 'Artisanats': 'D', 'Cuisine': 'B', 'Conversations': 'C',
     'Théâtre': 'D', 'Jeux de cartes': 'B', 'Pêche sous marine': 'D', 'Voyages': 'C',
-    'Botanique': 'B', 'Golf': 'A', 'Ordinateur': 'A', 'Danse': 'D',
+    'Botanique': 'B', 'Golf': 'A', 'Informatique': 'A', 'Danse': 'D',
     'Jeux de stratégie': 'D', 'Jeux de logique': 'A', 'Jeux de société': 'C',
     'Bowling': 'B'
 }
@@ -663,7 +672,7 @@ phrases_mapping_all.update(phrases_mapping_fr)
 phrases_mapping_all.update(phrases_mapping_en)
 
 # --- MOTS CLÉS ---
-st.header(tr('Mots clés', 'Keywords'))
+st.header(tr('Ce qui vous définit', 'What describes you'))
 st.write(tr('Dans la liste ci-dessous, sélectionnez 10 adjectifs qui vous caractérisent le mieux',
             'From the list below, select 10 adjectives that best describe you'))
 
@@ -712,7 +721,7 @@ if selected_mots > 10:
     st.error(tr('Vous ne pouvez selectionner que 10 mots clés', 'You can select only 10 keywords'), icon='😢')
 
 # --- LOISIRS ---
-st.header(tr('Loisirs', 'Hobbies'))
+st.header(tr('Vos passions', 'Your hobbies'))
 st.write(tr('Selectionnez les loisirs que vous pratiquez ou que vous aimeriez pratiquer',
             'Select the hobbies you do or would like to do'))
 
@@ -753,9 +762,9 @@ with col2:
             st.rerun()
 
 # --- 20 QUESTIONS ---
-st.header(tr('20 Questions', '20 Questions'))
-st.write(tr('Sélectionnez les activités que vous aimez ou aimeriez pratiquer.',
-            'Select the activities you like or would like to do.'))
+st.header(tr('Vos affinités', 'Your affinities'))
+st.write(tr('Sélectionnez les activités qui vous attirent.',
+            'Select the activities that appeal to you.'))
 
 questions_list = list(questions_mapping_fr.keys()) if st.session_state.lang == 'fr' else list(questions_mapping_en.keys())
 mid_point_questions = len(questions_list) // 2
@@ -929,13 +938,13 @@ if submit:
                 'Inventeur': D_text_en if st.session_state.lang == 'en' else D_text_fr,
             }
             if pilot == 'Ingénieur':
-                display_personality_card(display_name, A_score, 'Inge.png', desc_map['Ingénieur'], solid_colors['Ingénieur'])
+                display_personality_card(display_name, A_score, 'Ingénieur.png', desc_map['Ingénieur'], solid_colors['Ingénieur'])
             elif pilot == 'Cartographe':
-                display_personality_card(display_name, B_score, 'carto.png', desc_map['Cartographe'], solid_colors['Cartographe'])
+                display_personality_card(display_name, B_score, 'cartographe.png', desc_map['Cartographe'], solid_colors['Cartographe'])
             elif pilot == 'Barde':
-                display_personality_card(display_name, C_score, 'bard.png', desc_map['Barde'], solid_colors['Barde'])
+                display_personality_card(display_name, C_score, 'barde2.png', desc_map['Barde'], solid_colors['Barde'])
             elif pilot == 'Inventeur':
-                display_personality_card(display_name, D_score, 'artistii.png', desc_map['Inventeur'], solid_colors['Inventeur'])
+                display_personality_card(display_name, D_score, 'inventeur.png', desc_map['Inventeur'], solid_colors['Inventeur'])
     # --- CO-PILOTS (75-99) ---
     copilots = [k for k, v in scores.items() if 75 <= v < 100]
     if copilots:
@@ -956,13 +965,13 @@ if submit:
                 'Inventeur': D_text_en if st.session_state.lang == 'en' else D_text_fr,
             }
             if copilot == 'Ingénieur':
-                display_personality_card(display_name, A_score, 'Inge.png', desc_map['Ingénieur'], solid_colors['Ingénieur'])
+                display_personality_card(display_name, A_score, 'Ingénieur.png', desc_map['Ingénieur'], solid_colors['Ingénieur'])
             elif copilot == 'Cartographe':
-                display_personality_card(display_name, B_score, 'carto.png', desc_map['Cartographe'], solid_colors['Cartographe'])
+                display_personality_card(display_name, B_score, 'cartographe.png', desc_map['Cartographe'], solid_colors['Cartographe'])
             elif copilot == 'Barde':
-                display_personality_card(display_name, C_score, 'bard.png', desc_map['Barde'], solid_colors['Barde'])
+                display_personality_card(display_name, C_score, 'barde2.png', desc_map['Barde'], solid_colors['Barde'])
             elif copilot == 'Inventeur':
-                display_personality_card(display_name, D_score, 'artistii.png', desc_map['Inventeur'], solid_colors['Inventeur'])
+                display_personality_card(display_name, D_score, 'inventeur.png', desc_map['Inventeur'], solid_colors['Inventeur'])
     else:
         st.info(tr("Nous n'avons pas détecté de co-pilote", "We did not detect any co-pilot"))
     # --- FAILLES (15-40) ---
@@ -985,13 +994,13 @@ if submit:
                 'Inventeur': D_text_en if st.session_state.lang == 'en' else D_text_fr,
             }
             if faille == 'Ingénieur':
-                display_personality_card(display_name, A_score, 'Inge.png', desc_map['Ingénieur'], solid_colors['Ingénieur'])
+                display_personality_card(display_name, A_score, 'Ingénieur.png', desc_map['Ingénieur'], solid_colors['Ingénieur'])
             elif faille == 'Cartographe':
-                display_personality_card(display_name, B_score, 'carto.png', desc_map['Cartographe'], solid_colors['Cartographe'])
+                display_personality_card(display_name, B_score, 'cartographe.png', desc_map['Cartographe'], solid_colors['Cartographe'])
             elif faille == 'Barde':
-                display_personality_card(display_name, C_score, 'bard.png', desc_map['Barde'], solid_colors['Barde'])
+                display_personality_card(display_name, C_score, 'barde2.png', desc_map['Barde'], solid_colors['Barde'])
             elif faille == 'Inventeur':
-                display_personality_card(display_name, D_score, 'artistii.png', desc_map['Inventeur'], solid_colors['Inventeur'])
+                display_personality_card(display_name, D_score, 'inventeur.png', desc_map['Inventeur'], solid_colors['Inventeur'])
     else:
         st.info(tr("Nous n'avons pas détecté de failles", "We did not detect any weaknesses"))
     # --- LIMITES (<15) ---
@@ -1014,13 +1023,13 @@ if submit:
                 'Inventeur': D_text_en if st.session_state.lang == 'en' else D_text_fr,
             }
             if limite == 'Ingénieur':
-                display_personality_card(display_name, A_score, 'Inge.png', desc_map['Ingénieur'], solid_colors['Ingénieur'])
+                display_personality_card(display_name, A_score, 'Ingénieur.png', desc_map['Ingénieur'], solid_colors['Ingénieur'])
             elif limite == 'Cartographe':
-                display_personality_card(display_name, B_score, 'carto.png', desc_map['Cartographe'], solid_colors['Cartographe'])
+                display_personality_card(display_name, B_score, 'cartographe.png', desc_map['Cartographe'], solid_colors['Cartographe'])
             elif limite == 'Barde':
-                display_personality_card(display_name, C_score, 'bard.png', desc_map['Barde'], solid_colors['Barde'])
+                display_personality_card(display_name, C_score, 'barde2.png', desc_map['Barde'], solid_colors['Barde'])
             elif limite == 'Inventeur':
-                display_personality_card(display_name, D_score, 'artistii.png', desc_map['Inventeur'], solid_colors['Inventeur'])
+                display_personality_card(display_name, D_score, 'inventeur.png', desc_map['Inventeur'], solid_colors['Inventeur'])
     else:
         st.info(tr("Nous n'avons pas détecté de limites", "We did not detect any limits"))
     # Display the download button
