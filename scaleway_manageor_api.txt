@@ -1,8 +1,0 @@
-Access Key ID:
-SCW3GAPXTAK141K4CGNE
-Secret Key:
-468641b3-c9e8-429b-a055-7e5f0fbe16e1
-
-
-ssh manageor vm:
-ssh-keygen -t ed25519 -C “login” -Z aes256-gcm@openssh.com
