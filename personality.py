@@ -224,10 +224,9 @@ def display_personality_card(name, score, image_path, description, background_co
         color_map = {
             'Ingénieur': "#667eea",
             'Engineer': "#667eea",
-            'Cartographe': "#28961a",
-            'Cartographer': "#28961a",
-            'Barde': "#f5576c",
-            'Bard': "#f5576c",
+            'Organisateur': "#28961a",
+            'Connecteur': "#f5576c",
+            'Connector': "#f5576c",
             'Inventeur': "#fd9666",
             'Inventor': "#fd9666"
         }
@@ -257,37 +256,29 @@ def display_personality_card(name, score, image_path, description, background_co
 st.set_page_config(layout='wide', page_icon=icon, page_title='E-diag Profiler')
 
 
-A_text_fr = """L'ingénieur aime bien résoudre des problèmes en utilisant la méthode scientifique et le raisonnement logique. 
-Il est dans la réflexion et est capable de conceptualiser des notions abstraites. C'est une personnalité plutôt introvertie qui aime analyser et savoir.\n
-***Points de force*** : compilent les faits, analysent, argumentent rationnellement, formulent des théories, mesurent précisément, résolvent les problèmes logiquement, 
-raisonnent, comprennent les éléments techniques, analysent avec l'esprit critique, travaillent à partir de chiffres, de statistiques, et sont précis."""
+A_text_fr = """L'Ingénieur est un esprit analytique qui aime comprendre et résoudre les problèmes à l'aide de la méthode scientifique et d'un raisonnement rigoureux. Réfléchi et conceptuel, il excelle dans l'abstraction et la modélisation d'idées complexes. De nature plutôt introvertie, il apprécie les environnements où l'analyse, la logique et la connaissance sont au cœur des échanges.\n
+***Ses points forts*** : il collecte et structure les faits, analyse avec esprit critique, argumente de façon rationnelle, élabore des théories solides, mesure avec précision et résout les problèmes de manière logique. Il comprend aisément les aspects techniques, s'appuie sur les chiffres et les statistiques, et fait preuve d'une grande rigueur dans son travail."""
 
-B_text_fr = """Le cartographe est prudent et organisé. Il a des habitudes bien précises et respecte soigneusement les règles.
-Il planifie méticuleusement ce qui doit être fait et se retrouve bien dans les tâches administratif ou son souci du détail est sa fiabilité est valorisé.\n
-***Points de force*** : remarquent les défauts, approchent les problèmes pratiquement, vont jusqu'au bout des choses, développent des plans détaillés et des procédures, et envisagent les problèmes sous l'angle du planning."""
+B_text_fr = """L'Organisateur est une personne méthodique et prévoyante. Il suit des habitudes bien établies et accorde une grande importance au respect des règles. Son sens de l'ordre et sa rigueur lui permettent de planifier avec soin chaque étape de ses projets. À l'aise dans les tâches administratives, il se distingue par son souci du détail et sa fiabilité.\n
+***Ses points forts*** : il repère rapidement les imperfections, adopte une approche concrète et pragmatique des problèmes, mène ses actions jusqu'à leur aboutissement, conçoit des plans et procédures détaillés, et aborde les difficultés sous l'angle de l'organisation et de la planification."""
 
-C_text_fr = """Le barde aime le contact humain. Il est empathique, relationnel et amicale. Il est expressif et communique bien avec les autres.\n
-***Points de force*** : comprennent les difficultés relationnelles, anticipent le ressenti des autres, comprennent intuitivement le ressenti des autres, perçoivent des éléments non verbaux issus du stress, engendrent l'enthousiasme, persuadent, concilient, enseignent, partagent, comprennent les éléments émotionnels, prennent en compte les valeurs."""
+C_text_fr = """Le Connecteur est une personne tournée vers les autres, à l'aise dans les relations humaines et animée par le contact social. Empathique, chaleureux et communicatif, il crée facilement du lien et favorise une atmosphère positive autour de lui.\n
+***Ses points forts*** : il comprend les dynamiques relationnelles, perçoit et anticipe le ressenti des autres, capte les signaux non verbaux liés aux émotions ou au stress. Il sait susciter l'enthousiasme, convaincre, concilier et transmettre. Attentif aux valeurs et aux émotions, il favorise la compréhension mutuelle et le partage."""
 
-D_text_fr = """L'inventeur est un aventurier avec une imagination débordante qui rêve éveillé. C'est un visionnaire qui a toujours des idées très originales.
-C'est aussi un rebel qui aime bien prendre des risuqes et se projeter.\n
-***Points de force*** : Lisent les signes du changement, voient les choses globalement, reconnaissent les nouvelles possibilités, tolèrent l'ambiguïté, intègrent les idées et les concepts, défient les règles établies, synthétisent les éléments divers en un nouveau tout, inventent des solutions nouvelles, résolvent les problèmes de manière intuitive, intègrent en simultané différents inputs."""
+D_text_fr = """L'Inventeur est un esprit aventurier animé par une imagination foisonnante. Visionnaire et créatif, il rêve grand et ose explorer des territoires nouveaux. Rebelle dans l'âme, il aime sortir des sentiers battus, prendre des risques et se projeter vers l'inconnu.\n
+***Ses points forts*** : il perçoit les signes du changement, adopte une vision d'ensemble, identifie de nouvelles opportunités et accueille volontiers l'ambiguïté. Il sait relier les idées et concepts pour en créer de nouveaux, remettre en question les règles établies, synthétiser des éléments variés en une approche innovante et trouver des solutions intuitives en intégrant simultanément plusieurs sources d'information."""
 
-A_text_en = """The Engineer enjoys solving problems using scientific methods and logical reasoning.
-They reflect deeply and can conceptualize abstract ideas. Often introverted, they like to analyze and understand.\n
-***Strengths***: compile facts, analyze, argue rationally, form theories, perform precise measurements, solve problems logically, 
-reason using critical thinking, understand technical matters, work with numbers and statistics."""
+A_text_en = """The Engineer is an analytical thinker who enjoys understanding and solving problems using scientific methods and rigorous reasoning. Thoughtful and conceptual, they excel at abstract thinking and modeling complex ideas. Generally introverted, they thrive in environments where analysis, logic, and knowledge are at the heart of discussions.\n
+***Their strengths***: Collecting and structuring facts, analyzing critically, arguing rationally, developing sound theories, measuring accurately, and solving problems logically. They easily understand technical aspects, rely on figures and statistics, and demonstrate great rigor in their work."""
 
-B_text_en = """The Cartographer is careful and organized, with well-defined habits and strong respect for rules.
-They plan meticulously and thrive in administrative tasks where attention to detail and reliability are valued.\n
-***Strengths***: notice defects, take practical approaches, follow through, develop detailed plans and procedures, and think in terms of schedules."""
+B_text_en = """The Organizer is a methodical and forward-thinking person. They follow well-established habits and place great importance on following the rules. Their sense of order and rigor allow them to carefully plan each step of their projects. Comfortable with administrative tasks, they stand out for their attention to detail and reliability.\n
+***Their strengths***: they quickly spot imperfections, take a concrete and pragmatic approach to problems, see their actions through to completion, devise detailed plans and procedures, and tackle difficulties from an organizational and planning perspective."""
 
-C_text_en = """The Bard thrives on human connection: empathetic, relational, and friendly. Expressive and a strong communicator.\n
-***Strengths***: understand relational challenges, anticipate others' feelings, read nonverbal stress cues, generate enthusiasm, persuade, reconcile, teach, share, consider emotional factors and values."""
+C_text_en = """The Connector is a people person who is comfortable in human relations and driven by social contact. Empathetic, warm, and communicative, they easily form bonds and foster a positive atmosphere around them.\n
+***Their strengths***: they understand relational dynamics, perceive and anticipate others' feelings, and pick up on nonverbal cues related to emotions or stress. They know how to generate enthusiasm, convince, reconcile, and communicate. Attentive to values and emotions, they promote mutual understanding and sharing."""
 
-D_text_en = """The Inventor is an adventurous visionary with a vivid imagination and original ideas.
-They challenge conventions and like to take risks and project into the future.\n
-***Strengths***: read signs of change, see the big picture, spot new possibilities, tolerate ambiguity, integrate ideas and concepts, challenge established rules, synthesize diverse inputs, invent new solutions, solve problemns using intuition, integrate inputs simultaneously."""
+D_text_en = """The Inventor is an adventurous spirit driven by a vivid imagination. Visionary and creative, they dream big and dare to explore new territories. Rebellious at heart, they like to think outside the box, take risks, and venture into the unknown.\n
+***Their strengths*** : they perceive signs of change, takes a holistic view, identifies new opportunities, and welcomes ambiguity. He knows how to connect ideas and concepts to create new ones, challenge established rules, synthesize various elements into an innovative approach, and find intuitive solutions by simultaneously integrating multiple sources of information."""
 
 try:
     st.image('baniere_profiler.png', use_container_width=True)
@@ -881,8 +872,8 @@ if submit:
     D_score = coef*personality_scores.get('D')
     
     st.write(tr(f'Ingénieur: {A_score}', f'Engineer: {A_score}'))
-    st.write(tr(f'Cartographe: {B_score}', f'Cartographer: {B_score}'))
-    st.write(tr(f'Barde: {C_score}', f'Bard: {C_score}'))
+    st.write(tr(f'Organisateur: {B_score}', f'Organisateur: {B_score}'))
+    st.write(tr(f'Connecteur: {C_score}', f'Connector: {C_score}'))
     st.write(tr(f'Inventeur: {D_score}', f'Inventor: {D_score}'))
     
     # Get the current timestamp
@@ -898,8 +889,8 @@ if submit:
     st.session_state['results_posted'] = True
     scores = {
         'Ingénieur': A_score, 
-        'Cartographe': B_score, 
-        'Barde': C_score, 
+        'Organisateur': B_score, 
+        'Connecteur': C_score, 
         'Inventeur': D_score
     }
     # Create a temporary text file with the results
@@ -907,15 +898,15 @@ if submit:
     # Color scheme for each personality
     colors = {
         'Ingénieur': 'linear-gradient(135deg, #b0bbec 0%, #667eea 100%)',
-        'Cartographe': 'linear-gradient(135deg, #97d48f 0%, #28961a 100%)',
-        'Barde': 'linear-gradient(135deg, #eba8b1 0%, #f5576c 100%)',
+        'Organisateur': 'linear-gradient(135deg, #97d48f 0%, #28961a 100%)',
+        'Connecteur': 'linear-gradient(135deg, #eba8b1 0%, #f5576c 100%)',
         'Inventeur': 'linear-gradient(135deg, #e0bb97 0%, #fd9666 100%)'
     }
     # Solid colors for cards
     solid_colors = {
         'Ingénieur': "#667eea",
-        'Cartographe': "#28961a",
-        'Barde': "#f5576c",
+        'Organisateur': "#28961a",
+        'Connecteur': "#f5576c",
         'Inventeur': "#fd9666"
     }
     # --- PILOTS (>99) ---
@@ -927,22 +918,22 @@ if submit:
         for pilot in pilots:
             display_name = {
                 'Ingénieur': tr('Ingénieur', 'Engineer'),
-                'Cartographe': tr('Cartographe', 'Cartographer'),
-                'Barde': tr('Barde', 'Bard'),
+                'Organisateur': tr('Organisateur', 'Organisateur'),
+                'Connecteur': tr('Connecteur', 'Connector'),
                 'Inventeur': tr('Inventeur', 'Inventor')
             }[pilot]
             desc_map = {
                 'Ingénieur': A_text_en if st.session_state.lang == 'en' else A_text_fr,
-                'Cartographe': B_text_en if st.session_state.lang == 'en' else B_text_fr,
-                'Barde': C_text_en if st.session_state.lang == 'en' else C_text_fr,
+                'Organisateur': B_text_en if st.session_state.lang == 'en' else B_text_fr,
+                'Connecteur': C_text_en if st.session_state.lang == 'en' else C_text_fr,
                 'Inventeur': D_text_en if st.session_state.lang == 'en' else D_text_fr,
             }
             if pilot == 'Ingénieur':
                 display_personality_card(display_name, A_score, 'Ingénieur.png', desc_map['Ingénieur'], solid_colors['Ingénieur'])
-            elif pilot == 'Cartographe':
-                display_personality_card(display_name, B_score, 'cartographe.png', desc_map['Cartographe'], solid_colors['Cartographe'])
-            elif pilot == 'Barde':
-                display_personality_card(display_name, C_score, 'barde2.png', desc_map['Barde'], solid_colors['Barde'])
+            elif pilot == 'Organisateur':
+                display_personality_card(display_name, B_score, 'cartographe.png', desc_map['Organisateur'], solid_colors['Organisateur'])
+            elif pilot == 'Connecteur':
+                display_personality_card(display_name, C_score, 'barde2.png', desc_map['Connecteur'], solid_colors['Connecteur'])
             elif pilot == 'Inventeur':
                 display_personality_card(display_name, D_score, 'inventeur.png', desc_map['Inventeur'], solid_colors['Inventeur'])
     # --- CO-PILOTS (75-99) ---
@@ -954,22 +945,22 @@ if submit:
         for copilot in copilots:
             display_name = {
                 'Ingénieur': tr('Ingénieur', 'Engineer'),
-                'Cartographe': tr('Cartographe', 'Cartographer'),
-                'Barde': tr('Barde', 'Bard'),
+                'Organisateur': tr('Organisateur', 'Organisateur'),
+                'Connecteur': tr('Connecteur', 'Connector'),
                 'Inventeur': tr('Inventeur', 'Inventor')
             }[copilot]
             desc_map = {
                 'Ingénieur': A_text_en if st.session_state.lang == 'en' else A_text_fr,
-                'Cartographe': B_text_en if st.session_state.lang == 'en' else B_text_fr,
-                'Barde': C_text_en if st.session_state.lang == 'en' else C_text_fr,
+                'Organisateur': B_text_en if st.session_state.lang == 'en' else B_text_fr,
+                'Connecteur': C_text_en if st.session_state.lang == 'en' else C_text_fr,
                 'Inventeur': D_text_en if st.session_state.lang == 'en' else D_text_fr,
             }
             if copilot == 'Ingénieur':
                 display_personality_card(display_name, A_score, 'Ingénieur.png', desc_map['Ingénieur'], solid_colors['Ingénieur'])
-            elif copilot == 'Cartographe':
-                display_personality_card(display_name, B_score, 'cartographe.png', desc_map['Cartographe'], solid_colors['Cartographe'])
-            elif copilot == 'Barde':
-                display_personality_card(display_name, C_score, 'barde2.png', desc_map['Barde'], solid_colors['Barde'])
+            elif copilot == 'Organisateur':
+                display_personality_card(display_name, B_score, 'cartographe.png', desc_map['Organisateur'], solid_colors['Organisateur'])
+            elif copilot == 'Connecteur':
+                display_personality_card(display_name, C_score, 'barde2.png', desc_map['Connecteur'], solid_colors['Connecteur'])
             elif copilot == 'Inventeur':
                 display_personality_card(display_name, D_score, 'inventeur.png', desc_map['Inventeur'], solid_colors['Inventeur'])
     else:
@@ -983,22 +974,22 @@ if submit:
         for faille in failles:
             display_name = {
                 'Ingénieur': tr('Ingénieur', 'Engineer'),
-                'Cartographe': tr('Cartographe', 'Cartographer'),
-                'Barde': tr('Barde', 'Bard'),
+                'Organisateur': tr('Organisateur', 'Organisateur'),
+                'Connecteur': tr('Connecteur', 'Connector'),
                 'Inventeur': tr('Inventeur', 'Inventor')
             }[faille]
             desc_map = {
                 'Ingénieur': A_text_en if st.session_state.lang == 'en' else A_text_fr,
-                'Cartographe': B_text_en if st.session_state.lang == 'en' else B_text_fr,
-                'Barde': C_text_en if st.session_state.lang == 'en' else C_text_fr,
+                'Organisateur': B_text_en if st.session_state.lang == 'en' else B_text_fr,
+                'Connecteur': C_text_en if st.session_state.lang == 'en' else C_text_fr,
                 'Inventeur': D_text_en if st.session_state.lang == 'en' else D_text_fr,
             }
             if faille == 'Ingénieur':
                 display_personality_card(display_name, A_score, 'Ingénieur.png', desc_map['Ingénieur'], solid_colors['Ingénieur'])
-            elif faille == 'Cartographe':
-                display_personality_card(display_name, B_score, 'cartographe.png', desc_map['Cartographe'], solid_colors['Cartographe'])
-            elif faille == 'Barde':
-                display_personality_card(display_name, C_score, 'barde2.png', desc_map['Barde'], solid_colors['Barde'])
+            elif faille == 'Organisateur':
+                display_personality_card(display_name, B_score, 'cartographe.png', desc_map['Organisateur'], solid_colors['Organisateur'])
+            elif faille == 'Connecteur':
+                display_personality_card(display_name, C_score, 'barde2.png', desc_map['Connecteur'], solid_colors['Connecteur'])
             elif faille == 'Inventeur':
                 display_personality_card(display_name, D_score, 'inventeur.png', desc_map['Inventeur'], solid_colors['Inventeur'])
     else:
@@ -1012,22 +1003,22 @@ if submit:
         for limite in limites:
             display_name = {
                 'Ingénieur': tr('Ingénieur', 'Engineer'),
-                'Cartographe': tr('Cartographe', 'Cartographer'),
-                'Barde': tr('Barde', 'Bard'),
+                'Organisateur': tr('Organisateur', 'Organizer'),
+                'Connecteur': tr('Connecteur', 'Connector'),
                 'Inventeur': tr('Inventeur', 'Inventor')
             }[limite]
             desc_map = {
                 'Ingénieur': A_text_en if st.session_state.lang == 'en' else A_text_fr,
-                'Cartographe': B_text_en if st.session_state.lang == 'en' else B_text_fr,
-                'Barde': C_text_en if st.session_state.lang == 'en' else C_text_fr,
+                'Organisateur': B_text_en if st.session_state.lang == 'en' else B_text_fr,
+                'Connecteur': C_text_en if st.session_state.lang == 'en' else C_text_fr,
                 'Inventeur': D_text_en if st.session_state.lang == 'en' else D_text_fr,
             }
             if limite == 'Ingénieur':
                 display_personality_card(display_name, A_score, 'Ingénieur.png', desc_map['Ingénieur'], solid_colors['Ingénieur'])
-            elif limite == 'Cartographe':
-                display_personality_card(display_name, B_score, 'cartographe.png', desc_map['Cartographe'], solid_colors['Cartographe'])
-            elif limite == 'Barde':
-                display_personality_card(display_name, C_score, 'barde2.png', desc_map['Barde'], solid_colors['Barde'])
+            elif limite == 'Organisateur':
+                display_personality_card(display_name, B_score, 'cartographe.png', desc_map['Organisateur'], solid_colors['Organisateur'])
+            elif limite == 'Connecteur':
+                display_personality_card(display_name, C_score, 'barde2.png', desc_map['Connecteur'], solid_colors['Connecteur'])
             elif limite == 'Inventeur':
                 display_personality_card(display_name, D_score, 'inventeur.png', desc_map['Inventeur'], solid_colors['Inventeur'])
     else:

@@ -4,6 +4,9 @@ env
 # secrets
 .streamlit/secrets.toml
 
+#useless folders
+old_images
+
 # database test scripts
 add_test_data.py
 test_database.py
